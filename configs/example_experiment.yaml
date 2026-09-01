@@ -1,0 +1,88 @@
+# =============================================================================
+# Example experiment configuration
+# =============================================================================
+# The whole testbed is config-driven: one YAML file fully specifies a run so that
+# the privacy, robustness, and heterogeneity axes vary INDEPENDENTLY and every run
+# is reproducible/loggable. Copy this file per experiment (e.g. configs/exp_dp_eps3.yaml).
+#
+# This is a SCHEMA STUB for Task 1 — fields will be consumed/validated by the sweep
+# runner (src/experiments) as later tasks are implemented. Values here are defaults,
+# not yet wired to code.
+# -----------------------------------------------------------------------------
+
+experiment:
+  name: "example_fedavg_iid_nodp"
+  seed: 42
+  output_dir: "results/example_fedavg_iid_nodp"
+
+data:
+  dataset: "nih_chestxray14"
+  root: "data/raw"                # NIH images + Data_Entry_2017.csv + BBox_List_2017.csv
+  image_size: 224
+  num_pathologies: 14
+  severity:
+    enabled: true
+    source: "bbox"               # heuristic proxy from BBox_List_2017.csv
+    binning: "tercile"           # tercile | fixed  (thresholds decided in Task 2)
+    classes: ["mild", "moderate", "severe"]
+
+partition:
+  num_nodes: 3                    # node-count-agnostic; sweepable later
+  scheme: "iid"                   # iid | non_iid
+  test_frac: 0.2                  # patient fraction held out as global test set
+  manifest_path: null             # if set + exists, load cached manifest; else build & save here
+  non_iid:
+    method: "dirichlet"           # label-skew Dirichlet partition
+    alpha: 0.5                    # lower = more skew (value(s) to sweep, TBD)
+
+model:
+  backbone: "densenet121"         # densenet121 | resnet50 (ImageNet-pretrained)
+  pretrained: true
+  dropout: 0.0
+  heads:
+    pathology: true               # multi-label classification (14 labels)
+    severity: true                # ordinal grading (bbox-subset images only)
+
+training:
+  local_epochs: 1
+  batch_size: 32
+  optimizer: "adam"               # adam | sgd
+  lr: 0.0001
+  rounds: 20                      # federated communication rounds
+  num_workers: 0                  # keep 0 on Windows to avoid loader spawn issues
+  use_gpu: true                   # falls back to CPU if no CUDA
+  severity_weight: 1.0            # weight of the severity term in the combined loss
+  max_batches: null               # cap batches/epoch for quick smoke runs (null = full)
+
+federated:
+  strategy: "fedavg"              # fedavg | krum | multikrum | trimmed_mean | median | trust
+  fraction_fit: 1.0
+  heterogeneity_mitigation:
+    fedprox_mu: 0.0               # >0 enables FedProx proximal term
+    fedbn: false                  # keep BN layers local (FedBN)
+  robust:                         # params for the robust aggregation rules
+    beta: 0.2                     # trimmed_mean: fraction trimmed from each tail
+    multi_k: 2                    # multikrum: number of best updates to average
+
+privacy:
+  dp:
+    enabled: false                # per-sample clipping + Gaussian noise (Opacus)
+    max_grad_norm: 1.0            # per-sample clip bound C
+    noise_multiplier: 1.0         # sigma (noise std = sigma * C); higher = more private
+    target_delta: 1.0e-5          # accountant reports cumulative (eps, delta)
+    accountant: "rdp"             # Renyi-DP accountant
+                                  # NOTE: DP forces BN->GroupNorm and disables FedProx/FedBN.
+
+attack:
+  enabled: false
+  byzantine:
+    fraction: 0.0                 # fraction of adversarial clients (rounded to a node count)
+    type: "none"                  # label_flip | sign_flip | scaled_update | model_replacement
+    scale: 10.0                   # boost factor for scaled_update / model_replacement
+
+audit:
+  gradient_inversion: false       # deep-leakage-from-gradients style
+  membership_inference: false     # shadow-model based
+
+evaluation:
+  metrics: ["auc", "accuracy", "severity_mae", "severity_qwk"]

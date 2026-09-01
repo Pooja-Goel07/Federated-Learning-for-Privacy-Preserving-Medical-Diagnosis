@@ -1,0 +1,65 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ---- Virtual environments ----
+venv/
+.venv/
+env/
+ENV/
+
+# ---- Data & large artifacts (never commit raw medical images) ----
+data/raw/*
+!data/raw/README.md
+data/processed/*
+!data/processed/.gitkeep
+data/partitions/*.npz
+data/partitions/*.pt
+data/partitions/*.json
+data/_smoke/
+*.h5
+*.hdf5
+*.png.cache
+
+# ---- Model checkpoints & results binaries ----
+*.pt
+*.pth
+*.ckpt
+*.onnx
+results/**/*.png
+results/**/*.pt
+results/**/checkpoints/
+
+# ---- Node / frontend ----
+node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+*.local
+
+# ---- Secrets / env ----
+.env
+.env.*
+!.env.example
+
+# ---- Editor / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# ---- Logs ----
+*.log
+logs/

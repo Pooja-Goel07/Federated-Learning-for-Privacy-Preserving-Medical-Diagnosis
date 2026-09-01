@@ -1,0 +1,50 @@
+# Tiny OFFLINE smoke config — verifies the full pipeline runs end-to-end without
+# any download (pretrained: false) or GPU. Point --data-root at a synthetic dataset:
+#
+#   python -c "from src.data.synthetic import make_synthetic_dataset as m; m('data/_smoke', write_images=True)"
+#   python -m src.experiments.run centralized --config configs/smoke.yaml --data-root data/_smoke
+#
+# Not a research config — for wiring/CI sanity only.
+
+experiment:
+  name: "smoke"
+  seed: 0
+  output_dir: "results/smoke"
+
+data:
+  root: "data/_smoke"
+  image_size: 64
+  severity:
+    enabled: true
+    binning: "tercile"
+
+partition:
+  num_nodes: 3
+  scheme: "non_iid"
+  test_frac: 0.3
+  manifest_path: null
+  non_iid:
+    alpha: 0.5
+
+model:
+  backbone: "densenet121"
+  pretrained: false
+  dropout: 0.0
+  heads:
+    pathology: true
+    severity: true
+
+training:
+  local_epochs: 1
+  batch_size: 8
+  optimizer: "adam"
+  lr: 0.0001
+  rounds: 3                        # federated communication rounds (small for smoke)
+  num_workers: 0
+  use_gpu: false
+  severity_weight: 1.0
+  max_batches: 2
+
+federated:
+  strategy: "fedavg"
+  fraction_fit: 1.0

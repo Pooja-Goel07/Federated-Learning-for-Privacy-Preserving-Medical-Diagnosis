@@ -1,0 +1,52 @@
+# =============================================================================
+# Dependencies — Federated Learning for Privacy-Preserving Medical Diagnosis
+# =============================================================================
+# Primary environment: Python 3.11 (local venv AND Google Colab). The full stack —
+# including Flower and Opacus — installs cleanly on 3.11, so smoke tests run locally;
+# Colab is used for GPU-scale training.
+#
+# TORCH: torch/torchvision wheels are platform/CUDA-specific and are NOT pulled from
+# PyPI here. Install them separately:
+#   * Local CPU:  pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+#   * Colab:      preinstalled — do not reinstall.
+# Verified local install: torch 2.13.0+cpu / torchvision 0.28.0+cpu on Python 3.11.
+#
+# Pins are lower bounds. For an exact reproduction of the working environment see
+# requirements.lock.txt (a full `pip freeze` snapshot). NOTE: the lock pins
+# torch==...+cpu / torchvision==...+cpu which must be installed from the CPU index
+# (see above), not plain PyPI.
+# -----------------------------------------------------------------------------
+
+# ---- Core deep learning (installed) ----
+torchmetrics>=1.3
+
+# ---- Data / metrics (installed) ----
+numpy>=2.1
+pandas>=2.2
+scikit-learn>=1.5
+pillow>=10.4
+opencv-python-headless>=4.9
+
+# ---- Experiment orchestration & config (installed) ----
+pyyaml>=6.0
+typer>=0.12
+tqdm>=4.66
+matplotlib>=3.8
+
+# ---- Federated orchestration (installed; core only, no Ray) ----
+# We use flwr core + an in-process orchestrator, so the [simulation]/Ray extra is
+# intentionally NOT required. See CLAUDE.md section 5.
+flwr>=1.8,<2.0
+
+# ---- Differential privacy (installed) ----
+opacus>=1.4
+
+# ---- Backend / FastAPI (added in Task 13) ----
+fastapi>=0.110
+uvicorn[standard]>=0.29
+websockets>=12.0
+python-multipart>=0.0.9
+pydantic>=2.6
+
+# ---- Plotting (optional, study.md figures) ----
+plotly>=5.20
