@@ -48,7 +48,22 @@ Record decisions here as they are made, with rationale, so the report can cite t
 
 ## 2. Experiment Log
 
-_No experiments run yet. First entries will appear after Task 4 (centralised baseline)._
+### EXP-001 — Core architecture sanity on synthetic data, defences OFF  (Tasks 4/5/6, 2026-10-13)
+- **Purpose:** end-to-end check that the pipeline works and the federated design recovers
+  centralised performance before spending GPU time on real data. NOT a research result — the
+  data is synthetic scaffolding with an injected learnable signal (each of 6 active pathologies
+  = a fixed bright patch; bbox images get a severity square sized by class).
+- **Config:** synthetic (~400 imgs, 48px, signal-bearing), densenet121 from scratch (`pretrained:false`),
+  3 nodes, non-IID Dirichlet α=0.5, test_frac 0.25, Adam lr 1e-3, batch 16, seed 42. Baselines 8 epochs;
+  federated 12 rounds × 1 local epoch; plain FedAvg; no DP, no robust aggregation, no attacks.
+- **Metrics (mean ROC-AUC on shared test set):** centralised **0.989** · federated FedAvg **0.982**
+  · single-site floor **0.831** (per node ~0.77–0.86). Federated accuracy 0.95+. Federated global AUC
+  climbs 0.59→0.98 across rounds. Plots/report in `results/demo/`.
+- **Observations:** expected ordering floor < federated ≤ ceiling holds cleanly; federation closes ~96%
+  of the floor→ceiling gap while keeping data local. Confirms the FedAvg aggregation + partition + dual-head
+  training loop are wired correctly. Severity head is secondary here (small synthetic bbox subset).
+- **Deviations:** none. This is a plumbing/demo experiment, reported as such; real NIH numbers pending the
+  Colab run (`notebooks/colab_training.ipynb`, `configs/colab_real.yaml`).
 
 <!--
 Template for each experiment entry:
@@ -61,3 +76,5 @@ Template for each experiment entry:
 - **Observations:** what happened, anything surprising, comparison to isolated-defence literature / G1.
 - **Deviations:** any departure from the plan and why.
 -->
+
+_Next: EXP-002 will be the real-data NIH ChestX-ray14 subset run from Colab (same three configs)._

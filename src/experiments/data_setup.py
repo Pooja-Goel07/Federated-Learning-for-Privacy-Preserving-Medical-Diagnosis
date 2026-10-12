@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from torch.utils.data import DataLoader
 
@@ -63,6 +64,31 @@ def build_data_context(config: dict, data_root: str | Path | None = None) -> Dat
 
     image_index = build_image_index(paths["image_dir"])
 
+    # Restrict to images actually present on disk. This makes partial downloads work
+    # out of the box (e.g. a few NIH image zips instead of all 45 GB): rows whose PNG
+    # was not downloaded are dropped instead of crashing the Dataset later.
+    present = set(image_index.keys())
+    if present:
+        n_total = len(df)
+        df = df[df["Image Index"].isin(present)].reset_index(drop=True)
+        if len(df) < n_total:
+            print(f"[data] {len(df)}/{n_total} labelled images found on disk; using those")
+
+    # Optional patient-aware subsampling (keeps GPU runs tractable on Colab). Whole
+    # patients are kept/dropped (no patient leakage); bbox/severity patients are kept
+    # first so the severity head still has data.
+    sub = cfg_get(config, "data.subsample", {}) or {}
+    max_images = sub.get("max_images") if isinstance(sub, dict) else None
+    if max_images and len(df) > int(max_images):
+        df = _subsample_patients(
+            df,
+            severity_images=set(severity_map),
+            max_images=int(max_images),
+            keep_bbox=bool(sub.get("keep_bbox", True)),
+            seed=int(cfg_get(config, "experiment.seed", 42)),
+        )
+        print(f"[data] subsampled to {len(df)} images across {df['Patient ID'].nunique()} patients")
+
     manifest = _build_or_load_manifest(config, df, root)
     return DataContext(
         data_entry=df,
@@ -96,17 +122,56 @@ def _build_or_load_manifest(config: dict, df: pd.DataFrame, data_root: Path) -> 
     return manifest
 
 
+def _subsample_patients(
+    df: pd.DataFrame,
+    severity_images: set[str],
+    max_images: int,
+    keep_bbox: bool,
+    seed: int,
+) -> pd.DataFrame:
+    """Keep whole patients up to ~``max_images`` images, bbox patients first.
+
+    Patient-level (not image-level) so train/test stay patient-disjoint downstream.
+    All patients owning a severity/bbox image are kept first (so the severity head
+    still trains), then random other patients are added until the image budget fills.
+    """
+    pid_col = "Patient ID"
+    sizes = df.groupby(pid_col).size()
+
+    keep_pids: set = set()
+    if keep_bbox and severity_images:
+        keep_pids = set(df[df["Image Index"].isin(severity_images)][pid_col].unique())
+
+    total = int(sizes[list(keep_pids)].sum()) if keep_pids else 0
+    others = np.array([p for p in sizes.index if p not in keep_pids])
+    others = np.random.default_rng(seed).permutation(others)
+
+    selected = set(keep_pids)
+    for p in others:
+        if total >= max_images:
+            break
+        selected.add(p)
+        total += int(sizes[p])
+    return df[df[pid_col].isin(selected)].reset_index(drop=True)
+
+
 def _records_for(df: pd.DataFrame, files: list[str]) -> pd.DataFrame:
     return df[df["Image Index"].isin(set(files))]
 
 
 def _loader(dataset: ChestXray14Dataset, batch_size: int, shuffle: bool, num_workers: int) -> DataLoader:
+    # BatchNorm raises on a size-1 batch in train mode. Drop a lone trailing sample
+    # only while training (shuffle=True) and only when a full batch still remains, so
+    # test batches and tiny node partitions are never silently emptied.
+    n = len(dataset)
+    drop_last = shuffle and n > batch_size and (n % batch_size == 1)
     return DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=shuffle,
         num_workers=num_workers,
         pin_memory=False,
+        drop_last=drop_last,
     )
 
 

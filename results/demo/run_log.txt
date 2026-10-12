@@ -1,0 +1,44 @@
+======================================================================
+DEMO: full federated architecture on synthetic data (defences OFF)
+======================================================================
+[demo] wrote 400 images (160 with severity boxes) -> E:\VIT\SEM 7\Project 1\Federated Diagonosis\results\demo\data\images
+
+--- [1/3] Centralised baseline (upper bound) ---
+[centralized] epoch 0: train_loss=0.8137
+[centralized] epoch 1: train_loss=0.2631
+[centralized] epoch 2: train_loss=0.1970
+[centralized] epoch 3: train_loss=0.1605
+[centralized] epoch 4: train_loss=0.1350
+[centralized] epoch 5: train_loss=0.1198
+[centralized] epoch 6: train_loss=0.1078
+[centralized] epoch 7: train_loss=0.1008
+[centralized] wrote results -> E:\VIT\SEM 7\Project 1\Federated Diagonosis\results\demo\centralized\centralized_results.json
+
+--- [2/3] Single-site baselines (lower bound) ---
+[single-site] node 0: mean_auc=0.8604
+[single-site] node 1: mean_auc=0.8642
+[single-site] node 2: mean_auc=0.7677
+[single-site] wrote results -> E:\VIT\SEM 7\Project 1\Federated Diagonosis\results\demo\single_site\single_site_results.json
+
+--- [3/3] Federated FedAvg (3 nodes -> centre) ---
+[federated] round 1/12: global mean_auc=0.5935
+[federated] round 2/12: global mean_auc=0.7130
+[federated] round 3/12: global mean_auc=0.8142
+[federated] round 4/12: global mean_auc=0.8785
+[federated] round 5/12: global mean_auc=0.9327
+[federated] round 6/12: global mean_auc=0.9016
+[federated] round 7/12: global mean_auc=0.9265
+[federated] round 8/12: global mean_auc=0.9664
+[federated] round 9/12: global mean_auc=0.9594
+[federated] round 10/12: global mean_auc=0.9717
+[federated] round 11/12: global mean_auc=0.9718
+[federated] round 12/12: global mean_auc=0.9817
+[federated] wrote results -> E:\VIT\SEM 7\Project 1\Federated Diagonosis\results\demo\federated\federated_results.json
+
+[demo] wrote summary -> E:\VIT\SEM 7\Project 1\Federated Diagonosis\results\demo\summary.json
+======================================================================
+RESULTS
+  Centralised (ceiling)  mean AUC = 0.989
+  Single-site (floor)    mean AUC = 0.831
+  Federated  (FedAvg)    mean AUC = 0.982
+======================================================================

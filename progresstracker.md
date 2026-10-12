@@ -6,6 +6,56 @@
 
 ---
 
+## 2026-10-13 — Session 7 (synthetic demo + real-data Colab run prep)
+
+**Context:** user asked to (a) run the whole architecture on a small synthetic dataset with
+defences OFF and produce presentable results, then (b) prepare a real-data Colab run as the
+first step toward finishing the project. Both done this session.
+
+**(a) Synthetic demo — DONE, results in `results/demo/`:**
+- `results/demo/run_demo.py` generates a **signal-bearing** synthetic dataset (each of 6 active
+  pathologies = a bright patch at a fixed location; bbox images get a severity square sized by
+  class) so the model can genuinely learn image→label, then runs the core suite.
+- Results (densenet121 from scratch, 48px, non-IID α=0.5, 3 nodes):
+  **Centralised ceiling 0.989 · Federated FedAvg 0.982 · Single-site floor 0.831** mean AUC.
+  Federated closes ~96% of the floor→ceiling gap. Federated learning curve climbs 0.59→0.98 over 12 rounds.
+- `results/demo/{summary.json, REPORT.md, plots/01..04.png, run_log.txt}` written.
+
+**(b) Real-data Colab run — ready to execute (not yet run):**
+- `notebooks/colab_training.ipynb` rebuilt from the Task-1 stub into a real 19-cell notebook:
+  GPU check → install (flwr core, opacus) → git clone → Kaggle token → **partial** dataset
+  download (CSVs + images_001..003, ~10 GB, NOT the full 45 GB) → run core suite → charts/report
+  → copy to Drive. Repo URL baked in: Pooja-Goel07/Federated-Learning-...
+- `configs/colab_real.yaml`: 224px, pretrained densenet121, GPU, non-IID, subsample 20k, FedAvg.
+
+**Code changes this session (all tested):**
+- `src/experiments/data_setup.py`:
+  (1) **FIXED latent bug** — `_loader` now sets `drop_last` for a lone size-1 training batch
+      (BatchNorm crashes on batch size 1 in train mode). This was an uncommitted fix at session start.
+  (2) restrict dataframe to **images present on disk** (makes partial NIH downloads work).
+  (3) **patient-aware subsampling** (`data.subsample.{max_images,keep_bbox}`), `_subsample_patients`
+      keeps whole patients, bbox/severity patients first.
+- `src/experiments/suite.py` (NEW) — `run_core_suite(config, out_dir, ...)` runs all three configs
+  from one base config + writes `summary.json`. `run_demo.py` refactored to use it.
+- `src/evaluation/report.py` (NEW) — `generate_report(out_dir)` reads summary.json → 4 plots + REPORT.md
+  (dataviz-validated palette). `results/demo/make_report.py` is now a thin wrapper; notebook uses it too.
+- `setup.md` §8 rewritten with accurate step-by-step Colab instructions.
+
+**Verification:** all 6 test scripts pass; suite+subsample+on-disk-filter verified on synthetic data;
+notebook validated as well-formed JSON (19 cells, GPU accelerator); demo report regenerated via the
+new shared module.
+
+**IMPORTANT for the user (git):** commit & push **before** cloning on Colab — especially
+`src/experiments/data_setup.py` (the drop_last/subsample/on-disk changes), plus the new
+`src/experiments/suite.py`, `src/evaluation/report.py`, `configs/colab_real.yaml`,
+`notebooks/colab_training.ipynb`. Colab clones from GitHub, so unpushed code won't be there.
+
+**Exact next step when work resumes:** user runs `notebooks/colab_training.ipynb` on Colab to get
+real-data numbers. After that, proceed to remaining tasks: Task 11 (privacy audit attacks — not built),
+Task 12 (metrics consolidation), Task 13 (FastAPI backend), Task 14 (React dashboard), Task 15 (Review 2).
+
+---
+
 ## 2026-09-02 — Session 5 (Tasks 8 & 9: differential privacy + Byzantine robustness)
 
 **Current tasks:** §7 Tasks 8 (DP) & 9 (robust aggregation + attacks). **Complete & smoke-verified.**

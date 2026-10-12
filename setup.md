@@ -302,33 +302,48 @@ The four attack types:
 
 ## 8. Main model training on Google Colab (GPU)
 
-The real dataset is large, so full training runs on Colab with a GPU. The notebook
-`notebooks/colab_training.ipynb` mirrors the local commands.
+The real NIH dataset is large, so the real training runs on Colab with a GPU. The
+notebook `notebooks/colab_training.ipynb` is self-contained: it installs everything,
+downloads a slice of the dataset, runs the core suite (centralised + single-site +
+federated), and produces the charts and report. You do not type any commands by hand.
 
-Steps:
-1. Open `notebooks/colab_training.ipynb` in Google Colab.
-2. Set the runtime to GPU: Runtime -> Change runtime type -> GPU.
-3. Make the project available in Colab. Two common ways:
-   - Upload/clone the repository into Colab, or
-   - Put the repo in Google Drive and mount Drive (the notebook has a commented cell
-     showing `drive.mount`).
-4. Put the NIH dataset where the config's `data.root` points (for example, in the
-   mounted Drive folder), following the layout in section 5.
-5. Install the extra packages (torch is already present on Colab, so do not reinstall
-   it). The notebook has a commented `pip install` cell for `flwr`, `opacus`, etc.
-6. Run an experiment the same way as locally, for example:
-   ```
-   !python -m src.experiments.run centralized --config configs/colab_centralized.yaml
-   ```
-   or call the runner from a notebook cell. Create a Colab-specific config where
-   `training.use_gpu: true`, `training.max_batches: null` (use all data), and
-   `model.pretrained: true` (download ImageNet weights).
+What you need first:
+- A GitHub repo with the latest code pushed (so Colab can clone it). Before cloning,
+  commit and push any local changes, including `src/experiments/data_setup.py`.
+- A free Kaggle account, to download the dataset (the notebook walks you through the
+  API token).
+- A Google account (Colab + Drive).
 
-Results are written to the same `results/` structure, so you can download them and read
-them the same way as local runs.
+Steps (each is a numbered section in the notebook — run the cells top to bottom):
+1. Open `notebooks/colab_training.ipynb` in Google Colab
+   (colab.research.google.com -> File -> Open notebook -> GitHub, paste the repo URL).
+2. Set the runtime to GPU: Runtime -> Change runtime type -> T4 GPU.
+3. Section 1: checks the GPU is on.
+4. Section 2: installs Flower, Opacus, etc. (torch is already on Colab).
+5. Section 3: clones the repo. If your repo is private, edit the URL to the token form
+   shown in the cell.
+6. Section 4: upload your `kaggle.json` when prompted (Kaggle -> Settings -> API ->
+   Create New Token).
+7. Section 5: downloads two label CSVs plus three image zips (~10 GB, not the full
+   45 GB), and extracts them. Add more zips to `IMAGE_ZIPS` for a bigger run.
+8. Section 6: loads `configs/colab_real.yaml`; change `max_images`, `local_epochs`, or
+   `rounds` here to trade runtime for quality.
+9. Section 7: runs the full suite (the long cell, ~1-2 h on a T4). It prints per-epoch
+   and per-round progress and the final floor / federated / ceiling AUCs.
+10. Section 8: renders the four charts and the report inline.
+11. Section 9: mounts Drive and copies `results/colab/` there so nothing is lost when
+    the runtime disconnects.
 
-Tip: on Colab, set `data.root` in your config to the dataset folder in Drive, and leave
-`--data-root` off.
+To bring the results back into the project: download `results/colab/` from your Drive
+and copy it into the repo's `results/` folder, then commit it. The files are the same
+shape as the local demo (`summary.json`, `plots/`, `REPORT.md`).
+
+Notes:
+- The data pipeline uses only images actually present on disk and then subsamples to
+  `data.subsample.max_images` patients (keeping the bounding-box/severity images it
+  finds), so the partial download works without any code changes.
+- Colab free sessions can disconnect after a while; section 9 (save to Drive) is why
+  you will not lose a finished run. For very long runs consider Colab Pro.
 
 ---
 
