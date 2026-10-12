@@ -77,4 +77,25 @@ Template for each experiment entry:
 - **Deviations:** any departure from the plan and why.
 -->
 
-_Next: EXP-002 will be the real-data NIH ChestX-ray14 subset run from Colab (same three configs)._
+### EXP-002 — Core architecture on real NIH ChestX-ray14 (Colab GPU), defences OFF  (Tasks 4/5/6, 2026-10-13)
+- **Config:** NIH ChestX-ray14, images from the 224px resized Kaggle mirror, patient-aware subsample
+  ~20k images, 3 nodes, non-IID Dirichlet α=0.5, test_frac 0.2, densenet121 **pretrained (ImageNet)**,
+  Adam lr 1e-4, batch 32, seed 42. **Baselines 3 epochs; federated 10 rounds × 1 local epoch**; plain
+  FedAvg; no DP/robust/attacks. Results in `results/fl-medical-results/colab/`.
+- **Metrics (mean ROC-AUC, shared test set):** centralised **0.573** · federated FedAvg **0.674**
+  · single-site floor **0.557** (nodes 0.58/0.55/0.54). Federated per-pathology: Cardiomegaly 0.78,
+  Edema 0.79, Pneumothorax 0.77, …, Hernia 0.48 (rarest). Federated AUC rises 0.47→0.67 over 10 rounds.
+  Severity (proxy, n=179): federated MAE 0.61 / QWK 0.39 vs centralised 0.78 / 0.19.
+- **Observations:** (1) **Federation clearly beats isolated single-site** training on real data
+  (0.674 vs 0.557) — the core FL value proposition holds. (2) The global model genuinely learns over
+  rounds. (3) **Caveat / methodology issue:** federated (0.674) came out ABOVE centralised (0.573),
+  inverting the expected ceiling. Root cause is a **training-budget mismatch** — baselines ran 3 epochs
+  while federation accumulated 10 rounds of updates. So centralised here is a *lightly-trained
+  reference*, not a strict upper bound. Absolute AUCs are modest (subset + few epochs); literature on
+  the full 112k set reaches ~0.80.
+- **Deviations / fix:** `notebooks/colab_training.ipynb` now sets baseline `local_epochs = rounds`
+  (= 10) so a re-run yields a fair centralised ceiling (expected centralised ≥ federated > single-site).
+  Report generator hardened to explain the inversion instead of printing a nonsensical "gap closed %".
+  **A fair-epochs re-run (EXP-003) should replace these numbers for Review 2.**
+
+_Next: EXP-003 = fair-epochs re-run (baselines = 10 epochs); then DP + robust + composition on real data._

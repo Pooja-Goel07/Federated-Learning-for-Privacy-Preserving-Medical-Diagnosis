@@ -22,10 +22,15 @@ first step toward finishing the project. Both done this session.
 - `results/demo/{summary.json, REPORT.md, plots/01..04.png, run_log.txt}` written.
 
 **(b) Real-data Colab run — ready to execute (not yet run):**
-- `notebooks/colab_training.ipynb` rebuilt from the Task-1 stub into a real 19-cell notebook:
-  GPU check → install (flwr core, opacus) → git clone → Kaggle token → **partial** dataset
-  download (CSVs + images_001..003, ~10 GB, NOT the full 45 GB) → run core suite → charts/report
-  → copy to Drive. Repo URL baked in: Pooja-Goel07/Federated-Learning-...
+- `notebooks/colab_training.ipynb` rebuilt from the Task-1 stub into a real 20-cell notebook:
+  GPU check → install (flwr core, opacus) → git clone → Kaggle token → dataset download → run
+  core suite → charts/report → copy to Drive. Repo URL baked in: Pooja-Goel07/Federated-Learning-...
+- **Dataset download — FIXED mid-run:** the official `nih-chest-xrays/data` stores images as
+  *folders*, not `.zip` files, so `-f images_001.zip` 404s (user hit this on Colab). Now: label
+  CSVs come from the official dataset via `-f` (works), and all images come from the 224px resized
+  mirror `khanfashee/nih-chest-x-ray-14-224x224-resized` via one `--unzip` download (~4 GB; we
+  train at 224px anyway). Cell self-verifies on-disk↔Data_Entry filename match; fallback = official
+  `nih-chest-xrays/sample`. Also upgrades the kaggle client to 2.2.x.
 - `configs/colab_real.yaml`: 224px, pretrained densenet121, GPU, non-IID, subsample 20k, FedAvg.
 
 **Code changes this session (all tested):**

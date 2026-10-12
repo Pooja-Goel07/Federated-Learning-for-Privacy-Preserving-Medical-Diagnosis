@@ -324,8 +324,10 @@ Steps (each is a numbered section in the notebook — run the cells top to botto
    shown in the cell.
 6. Section 4: upload your `kaggle.json` when prompted (Kaggle -> Settings -> API ->
    Create New Token).
-7. Section 5: downloads two label CSVs plus three image zips (~10 GB, not the full
-   45 GB), and extracts them. Add more zips to `IMAGE_ZIPS` for a bigger run.
+7. Section 5: downloads the two label CSVs from the official dataset plus all images
+   from a 224x224 resized mirror (~4 GB, not the full 45 GB). It prints how many on-disk
+   images match the label file (should be ~112k); a fallback to the official sample is
+   noted in the next cell.
 8. Section 6: loads `configs/colab_real.yaml`; change `max_images`, `local_epochs`, or
    `rounds` here to trade runtime for quality.
 9. Section 7: runs the full suite (the long cell, ~1-2 h on a T4). It prints per-epoch

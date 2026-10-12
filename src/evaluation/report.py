@@ -151,9 +151,29 @@ def _write_report(s: dict, out_dir: Path) -> None:
     fed = s["federated"]["final_mean_auc"]
     ceiling = s["centralized"]["mean_auc"]
     fed_acc = s["federated"]["final_mean_accuracy"]
-    recovered = (fed - floor) / (ceiling - floor) * 100 if ceiling > floor else float("nan")
     per_node = s["single_site"]["per_node_auc"]
     setup = s.get("setup", {})
+    base_ep = setup.get("baseline_epochs", "?")
+    rounds = setup.get("fed_rounds", "?")
+
+    # Headline comparison line, robust to the ordering that actually came out.
+    gap = ceiling - floor
+    if gap > 1e-6 and fed <= ceiling + 1e-9:
+        gap_line = (
+            f"- Federated closes **{(fed - floor) / gap * 100:.0f}%** of the gap between the "
+            f"isolated floor and the pooled ceiling, **without any raw data leaving a node**."
+        )
+    elif fed > ceiling:
+        gap_line = (
+            f"- Federated (**{fed:.3f}**) here exceeds the pooled centralised reference "
+            f"(**{ceiling:.3f}**). This is a training-budget artefact, not a real effect: the "
+            f"centralised/single-site baselines ran **{base_ep}** epochs while the federation "
+            f"accumulates **{rounds}** rounds of updates. For a strict ceiling, re-run with the "
+            f"baseline epochs matched to the number of rounds. Either way, federated still clearly "
+            f"beats every isolated hospital (**{fed:.3f}** vs floor **{floor:.3f}**)."
+        )
+    else:
+        gap_line = f"- Federated mean AUC **{fed:.3f}** vs isolated single-site floor **{floor:.3f}**."
 
     node_rows = "\n".join(
         f"| {nid} | {auc:.3f} |" for nid, auc in sorted(per_node.items())
@@ -173,8 +193,8 @@ def _write_report(s: dict, out_dir: Path) -> None:
 
 **What this shows:** the full pipeline runs end-to-end and the federated design
 *works* — simulated hospitals train locally, a centre node aggregates their weights
-with plain **FedAvg**, and the global model recovers most of the pooled-data ceiling
-while clearly beating any hospital training alone.
+with plain **FedAvg**, and the global model approaches the pooled-data reference while
+clearly beating any hospital training alone.
 
 **Defence layers are OFF** (no differential privacy, no Byzantine-robust
 aggregation, no attacks) — this isolates the core learning loop.
@@ -201,10 +221,9 @@ aggregation, no attacks) — this isolates the core learning loop.
 |---|---|---|
 | Single-site (isolated) | **{floor:.3f}** | floor — one hospital, its own data only |
 | **Federated (FedAvg)** | **{fed:.3f}** | our architecture |
-| Centralised (pooled) | **{ceiling:.3f}** | ceiling — all data in one place |
+| Centralised (pooled) | **{ceiling:.3f}** | reference — all data in one place |
 
-- Federated closes **{recovered:.0f}%** of the gap between the isolated floor and
-  the pooled ceiling, **without any raw data leaving a node**.
+{gap_line}
 - Federated global model mean accuracy: **{fed_acc:.3f}**.
 {sev_line}
 ![Floor vs Federated vs Ceiling](plots/03_floor_fed_ceiling.png)
@@ -238,9 +257,9 @@ generalises worse on the shared test set. Aggregation combines their knowledge.
 ## Takeaways
 
 - The end-to-end architecture (data pipeline -> dual-head model -> local training ->
-  FedAvg aggregation -> global evaluation) runs and produces the expected
-  floor < federated <= ceiling ordering.
-- Federation recovers most of the centralised performance while keeping data local.
+  FedAvg aggregation -> global evaluation) runs on real data.
+- Federation clearly beats every isolated single-site hospital while keeping data local,
+  and the global model improves across rounds.
 - Next: switch the defence layers on (DP + robust aggregation) and measure the
   privacy-robustness-utility trade-off (Task 10).
 
