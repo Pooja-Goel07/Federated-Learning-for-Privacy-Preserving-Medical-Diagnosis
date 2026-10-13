@@ -1,7 +1,7 @@
 # setup.md - How to set up and run the project
 
 This guide explains, step by step, how to install the project and run every part of
-it: the main model training (locally and on Google Colab), the federated learning
+it: the main model training (locally and on Kaggle), the federated learning
 demo, the differential-privacy runs, the attack (Byzantine) simulations, and the
 tests you use to check that everything works.
 
@@ -22,7 +22,7 @@ Contents:
    - 7.4 Heterogeneity mitigation (FedProx / FedBN)
    - 7.5 Differential privacy
    - 7.6 Attack simulation (Byzantine attacks + robust aggregation)
-8. Main model training on Google Colab (GPU)
+8. Main model training on Kaggle (GPU)
 9. The configuration file explained
 10. Where results go and how to read them
 11. Running the tests / checking progress
@@ -56,7 +56,7 @@ notes are in `study.md`, and the session-by-session progress log is in
 - Node.js (only needed later for the React dashboard, which is not built yet).
 
 You do NOT need a GPU to run anything locally. Local runs use the CPU. The GPU is only
-for the large real-data training, which is done on Colab (section 8).
+for the large real-data training, which is done on Kaggle (section 8).
 
 ---
 
@@ -143,7 +143,7 @@ merged folder - the loader searches subfolders automatically. The dataset is lar
 
 For real runs you point the tools at `data/raw` (which is the default in the config),
 so you simply omit the `--data-root` option. Because the full dataset is large, the
-heavy real training is normally done on Colab (section 8), not on your laptop CPU.
+heavy real training is normally done on Kaggle (section 8), not on your laptop CPU.
 
 ---
 
@@ -300,52 +300,56 @@ The four attack types:
 
 ---
 
-## 8. Main model training on Google Colab (GPU)
+## 8. Main model training on Kaggle (GPU)
 
-The real NIH dataset is large, so the real training runs on Colab with a GPU. The
-notebook `notebooks/colab_training.ipynb` is self-contained: it installs everything,
-downloads a slice of the dataset, runs the core suite (centralised + single-site +
-federated), and produces the charts and report. You do not type any commands by hand.
+The real training runs on a Kaggle Notebook with a GPU. The notebook
+`notebooks/kaggle_training.ipynb` is self-contained: it installs everything, finds the
+mounted dataset (no download), runs the core suite (centralised + single-site +
+federated) with a class-balanced loss, produces the charts and report, and gives you a
+direct download link for a results zip. You do not type any commands by hand.
+
+Why Kaggle (vs Colab): Kaggle *mounts* datasets read-only under `/kaggle/input`, so
+there is no download step and no API token to upload — you just attach the dataset to
+the notebook.
 
 What you need first:
-- A GitHub repo with the latest code pushed (so Colab can clone it). Before cloning,
-  commit and push any local changes, including `src/experiments/data_setup.py`.
-- A free Kaggle account, to download the dataset (the notebook walks you through the
-  API token).
-- A Google account (Colab + Drive).
+- A GitHub repo with the latest code pushed (so Kaggle can clone it). Commit and push
+  your local changes first (src/, configs/kaggle_real.yaml, notebooks/kaggle_training.ipynb).
+- A free Kaggle account (phone-verified, which is required to enable GPU + Internet).
 
-Steps (each is a numbered section in the notebook — run the cells top to bottom):
-1. Open `notebooks/colab_training.ipynb` in Google Colab
-   (colab.research.google.com -> File -> Open notebook -> GitHub, paste the repo URL).
-2. Set the runtime to GPU: Runtime -> Change runtime type -> T4 GPU.
-3. Section 1: checks the GPU is on.
-4. Section 2: installs Flower, Opacus, etc. (torch is already on Colab).
-5. Section 3: clones the repo. If your repo is private, edit the URL to the token form
-   shown in the cell.
-6. Section 4: upload your `kaggle.json` when prompted (Kaggle -> Settings -> API ->
-   Create New Token).
-7. Section 5: downloads the two label CSVs from the official dataset plus all images
-   from a 224x224 resized mirror (~4 GB, not the full 45 GB). It prints how many on-disk
-   images match the label file (should be ~112k); a fallback to the official sample is
-   noted in the next cell.
-8. Section 6: loads `configs/colab_real.yaml`; change `max_images`, `local_epochs`, or
-   `rounds` here to trade runtime for quality.
-9. Section 7: runs the full suite (the long cell, ~1-2 h on a T4). It prints per-epoch
-   and per-round progress and the final floor / federated / ceiling AUCs.
-10. Section 8: renders the four charts and the report inline.
-11. Section 9: mounts Drive and copies `results/colab/` there so nothing is lost when
-    the runtime disconnects.
+Steps:
+1. Go to kaggle.com -> Code -> New Notebook. Then File -> Import Notebook, or upload
+   `notebooks/kaggle_training.ipynb`.
+2. In the right sidebar set: **Accelerator = GPU**, **Internet = On**.
+3. Click **+ Add Input** and add:
+   - `nih-chest-xrays/data` (official — provides the label CSVs; its images are 1024px).
+   - Optional but faster: `khanfashee/nih-chest-x-ray-14-224x224-resized` (224px images).
+     If added, the notebook picks it automatically; otherwise it uses the official images.
+4. Run All (top to bottom). The numbered sections:
+   - 1 checks the GPU; 2 installs Flower/Opacus and clones the repo (edit the URL to a
+     token form if the repo is private).
+   - 3 auto-discovers the CSVs and the image folder from `/kaggle/input` (prng PNG counts).
+   - 4 loads `configs/kaggle_real.yaml`; change `max_images` / `rounds` to trade runtime
+     for quality (baseline epochs are auto-matched to rounds for a fair ceiling).
+   - 5 runs the full suite (the long cell). Prints per-epoch/per-round progress and the
+     final floor / federated / ceiling AUCs.
+   - 6 renders the four charts and the report inline.
+   - 7 zips the results and shows a **download link** (`fl_results.zip`) — click it.
+5. For a long unattended run use **Save Version -> Save & Run All (Commit)**; it runs
+   headless (up to several hours) and the results under `/kaggle/working/` are saved as
+   the version's Output, downloadable later.
 
-To bring the results back into the project: download `results/colab/` from your Drive
-and copy it into the repo's `results/` folder, then commit it. The files are the same
-shape as the local demo (`summary.json`, `plots/`, `REPORT.md`).
+Bring the results into the project: unzip `fl_results.zip` into the repo's `results/`
+folder and commit it. The files are the same shape as the local demo (`summary.json`,
+`plots/`, `REPORT.md`).
 
 Notes:
-- The data pipeline uses only images actually present on disk and then subsamples to
-  `data.subsample.max_images` patients (keeping the bounding-box/severity images it
-  finds), so the partial download works without any code changes.
-- Colab free sessions can disconnect after a while; section 9 (save to Drive) is why
-  you will not lose a finished run. For very long runs consider Colab Pro.
+- Training quality: the Kaggle config uses a **class-balanced** BCE loss
+  (`training.class_balanced: true` -> per-class `pos_weight`), a ~30k-image patient-aware
+  subset, and baseline epochs matched to the number of rounds. Raise `max_images` and
+  `rounds` for higher AUC at the cost of runtime.
+- The pipeline uses only images present on disk and subsamples whole patients (keeping
+  the bounding-box/severity images), so attaching any image mirror works unchanged.
 
 ---
 
@@ -472,7 +476,7 @@ To see the current state of the project and what is planned next:
 - Slow runs on your laptop: that is expected on CPU, especially with differential
   privacy (per-sample gradients are heavy) or the real dataset. Use small settings for
   local checks: `training.max_batches: 2`, `training.batch_size: 8`,
-  `model.pretrained: false`, `data.image_size: 64`. Do the heavy runs on Colab.
+  `model.pretrained: false`, `data.image_size: 64`. Do the heavy runs on Kaggle.
 
 - On Windows, keep `training.num_workers: 0` (the default). Higher values can cause data
   loader errors on Windows.

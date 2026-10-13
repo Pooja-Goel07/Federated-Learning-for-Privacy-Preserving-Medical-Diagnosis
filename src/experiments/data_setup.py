@@ -62,7 +62,11 @@ def build_data_context(config: dict, data_root: str | Path | None = None) -> Dat
         severity_map = dict(zip(proxy.table["Image Index"], proxy.table["severity_index"]))
         thresholds = proxy.thresholds
 
-    image_index = build_image_index(paths["image_dir"])
+    # Images may live on a different root than the CSVs (e.g. on Kaggle the labels and
+    # the resized-image dataset mount at separate /kaggle/input paths). data.image_root
+    # overrides where images are scanned; default is the CSV root.
+    image_root = cfg_get(config, "data.image_root")
+    image_index = build_image_index(Path(image_root) if image_root else paths["image_dir"])
 
     # Restrict to images actually present on disk. This makes partial downloads work
     # out of the box (e.g. a few NIH image zips instead of all 45 GB): rows whose PNG
@@ -120,6 +124,31 @@ def _build_or_load_manifest(config: dict, df: pd.DataFrame, data_root: Path) -> 
     if manifest_path:
         manifest.save(manifest_path)
     return manifest
+
+
+def compute_pos_weight(
+    df: pd.DataFrame, files: list[str] | set[str], clamp: float = 50.0
+):
+    """Per-class BCE ``pos_weight`` = (#neg / #pos) over the given training files.
+
+    Counters ChestX-ray14's heavy class imbalance (most labels are negative), which
+    otherwise pins every sigmoid near 0 and flattens AUC. Classes with no positives in
+    this split get weight 1.0; weights are clamped to ``clamp`` to avoid blow-ups on
+    ultra-rare labels. Returns a FloatTensor[14], or None if there are no rows.
+    """
+    import torch
+
+    from src.data.constants import PATHOLOGIES
+
+    sub = df[df["Image Index"].isin(set(files))]
+    if len(sub) == 0:
+        return None
+    pos = sub[PATHOLOGIES].to_numpy(dtype="float64").sum(axis=0)
+    neg = len(sub) - pos
+    with np.errstate(divide="ignore", invalid="ignore"):
+        w = np.where(pos > 0, neg / np.maximum(pos, 1.0), 1.0)
+    w = np.clip(w, 1.0, clamp)
+    return torch.tensor(w, dtype=torch.float32)
 
 
 def _subsample_patients(

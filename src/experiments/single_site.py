@@ -18,7 +18,7 @@ from src.models.engine import evaluate, train_one_epoch
 
 from .builders import build_model, build_optimizer
 from .config import cfg_get
-from .data_setup import build_data_context, node_loader, test_loader
+from .data_setup import build_data_context, compute_pos_weight, node_loader, test_loader
 from .utils import get_device, save_json, set_seed
 
 
@@ -33,13 +33,18 @@ def run_single_site(config: dict, data_root: str | Path | None = None) -> dict:
     epochs = int(cfg_get(config, "training.local_epochs", cfg_get(config, "training.epochs", 1)))
     max_batches = cfg_get(config, "training.max_batches")
     severity_weight = float(cfg_get(config, "training.severity_weight", 1.0))
+    class_balanced = bool(cfg_get(config, "training.class_balanced", False))
 
     per_node: dict[str, dict] = {}
     for node_id in ctx.manifest.nodes:
         # Fresh model per node — no weight sharing (that's the point of the floor).
         model = build_model(config).to(device)
         optimizer = build_optimizer(config, model)
-        loss_fn = DualHeadLoss(severity_weight=severity_weight).to(device)
+        pos_weight = (
+            compute_pos_weight(ctx.data_entry, ctx.manifest.nodes[node_id])
+            if class_balanced else None
+        )
+        loss_fn = DualHeadLoss(severity_weight=severity_weight, pos_weight=pos_weight).to(device)
         train_loader = node_loader(ctx, node_id, config, train=True)
 
         history = []

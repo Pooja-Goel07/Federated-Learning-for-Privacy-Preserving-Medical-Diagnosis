@@ -36,6 +36,7 @@ class FLClient(NumPyClient):
         eval_loader: DataLoader | None = None,
         fedprox_mu: float = 0.0,
         fedbn: bool = False,
+        pos_weight: torch.Tensor | None = None,
     ) -> None:
         self.node_id = node_id
         self.model = model
@@ -48,7 +49,7 @@ class FLClient(NumPyClient):
         self.fedprox_mu = fedprox_mu
         # FedBN: BN weights/buffers stay local (excluded from send/aggregate/receive).
         self.exclude_keys = bn_state_keys(model) if fedbn else set()
-        self.loss_fn = DualHeadLoss(severity_weight=severity_weight).to(device)
+        self.loss_fn = DualHeadLoss(severity_weight=severity_weight, pos_weight=pos_weight).to(device)
         self.model.to(device)
 
     # ---- Flower NumPyClient interface ----

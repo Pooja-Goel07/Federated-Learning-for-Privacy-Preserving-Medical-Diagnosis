@@ -37,6 +37,7 @@ class DPFLClient(FLClient):
         severity_weight: float = 1.0,
         max_batches: int | None = None,
         eval_loader: DataLoader | None = None,
+        pos_weight: torch.Tensor | None = None,
     ) -> None:
         super().__init__(
             node_id=node_id,
@@ -50,6 +51,7 @@ class DPFLClient(FLClient):
             eval_loader=eval_loader,
             fedprox_mu=0.0,  # DP is incompatible with FedProx per-sample grads
             fedbn=False,     # DP replaces BN with GroupNorm
+            pos_weight=pos_weight,
         )
         self.dp = dp
         self._engine = None

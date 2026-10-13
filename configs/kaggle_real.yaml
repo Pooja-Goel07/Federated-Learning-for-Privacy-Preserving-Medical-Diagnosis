@@ -1,0 +1,75 @@
+# Real-data Kaggle run — core baselines + federated FedAvg (Tasks 4, 5, 6),
+# trained properly (class-balanced loss, compute-matched epochs, larger subset).
+#
+# On Kaggle the dataset(s) are *mounted* read-only under /kaggle/input, so there is no
+# download step. The notebook (notebooks/kaggle_training.ipynb) auto-discovers the label
+# CSVs and the image folder and sets data.root / data.image_root accordingly.
+# Defence layers (DP, robust aggregation, attacks) are OFF — this is the core comparison.
+
+experiment:
+  name: "kaggle_real"
+  seed: 42
+  output_dir: "/kaggle/working/results/colab"   # notebook overrides
+
+data:
+  root: "/kaggle/working/nih"        # notebook copies the two CSVs here
+  image_root: null                   # notebook sets this to the mounted image folder
+  image_size: 224
+  severity:
+    enabled: true
+    binning: "tercile"
+  subsample:
+    enabled: true
+    max_images: 30000                # patient-aware; raise for a bigger/longer run
+    keep_bbox: true
+
+partition:
+  num_nodes: 3
+  scheme: "non_iid"                  # Dirichlet label-skew across the 3 hospitals
+  test_frac: 0.2
+  manifest_path: "/kaggle/working/nih/manifest.json"
+  non_iid:
+    alpha: 0.5
+
+model:
+  backbone: "densenet121"
+  pretrained: true                  # ImageNet weights
+  dropout: 0.0
+  heads:
+    pathology: true
+    severity: true
+
+training:
+  local_epochs: 12                  # baselines; notebook sets this == rounds (fair ceiling)
+  batch_size: 32
+  optimizer: "adam"
+  lr: 0.0001
+  rounds: 12                        # federated communication rounds
+  num_workers: 4                    # Kaggle gives ~4 CPUs
+  use_gpu: true
+  severity_weight: 1.0
+  class_balanced: true              # per-class BCE pos_weight — big AUC lever on NIH
+  max_batches: null                 # use all data
+
+federated:
+  strategy: "fedavg"                # plain FedAvg (no robust aggregation)
+  fraction_fit: 1.0
+  heterogeneity_mitigation:
+    fedprox_mu: 0.0
+    fedbn: false
+  robust:
+    beta: 0.2
+    multi_k: 2
+
+privacy:
+  dp:
+    enabled: false
+
+attack:
+  enabled: false
+  byzantine:
+    type: "none"
+    fraction: 0.0
+
+evaluation:
+  metrics: ["auc", "accuracy", "severity_mae", "severity_qwk"]

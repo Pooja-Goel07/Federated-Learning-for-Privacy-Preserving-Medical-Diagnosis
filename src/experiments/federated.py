@@ -22,7 +22,7 @@ from src.privacy.client import DPFLClient
 
 from .builders import build_model, build_optimizer
 from .config import cfg_get
-from .data_setup import build_data_context, node_loader, test_loader
+from .data_setup import build_data_context, compute_pos_weight, node_loader, test_loader
 from .utils import get_device, save_json, set_seed
 
 
@@ -69,6 +69,12 @@ def run_federated(config: dict, data_root: str | Path | None = None) -> dict:
         model = build_model(config)
         return ensure_dp_compatible(model) if dp.enabled else model
 
+    # Class balancing (shared across clients + eval): pos_weight from all training data.
+    pos_weight = None
+    if bool(cfg_get(config, "training.class_balanced", False)):
+        all_train_files = [f for files in ctx.manifest.nodes.values() for f in files]
+        pos_weight = compute_pos_weight(ctx.data_entry, all_train_files)
+
     clients = []
     for node_id in node_ids:
         train_loader = node_loader(ctx, node_id, config, train=True)
@@ -77,21 +83,21 @@ def run_federated(config: dict, data_root: str | Path | None = None) -> dict:
                 node_id=node_id, model=make_model(), train_loader=train_loader,
                 optimizer_fn=optimizer_fn, attack_type=attack_type, num_clients=num_nodes,
                 scale=attack_scale, device=device, local_epochs=local_epochs,
-                severity_weight=severity_weight, max_batches=max_batches,
+                severity_weight=severity_weight, max_batches=max_batches, pos_weight=pos_weight,
             )
         elif dp.enabled:
             client = DPFLClient(
                 node_id=node_id, model=make_model(), train_loader=train_loader,
                 optimizer_fn=optimizer_fn, dp=dp, device=device,
                 local_epochs=local_epochs, severity_weight=severity_weight,
-                max_batches=max_batches,
+                max_batches=max_batches, pos_weight=pos_weight,
             )
         else:
             client = FLClient(
                 node_id=node_id, model=make_model(), train_loader=train_loader,
                 optimizer_fn=optimizer_fn, device=device, local_epochs=local_epochs,
                 severity_weight=severity_weight, max_batches=max_batches,
-                fedprox_mu=fedprox_mu, fedbn=fedbn,
+                fedprox_mu=fedprox_mu, fedbn=fedbn, pos_weight=pos_weight,
             )
         clients.append(client)
 
@@ -107,7 +113,7 @@ def run_federated(config: dict, data_root: str | Path | None = None) -> dict:
 
     global_model = make_model().to(device)
     shared_test = test_loader(ctx, config)
-    eval_loss_fn = DualHeadLoss(severity_weight=severity_weight).to(device)
+    eval_loss_fn = DualHeadLoss(severity_weight=severity_weight, pos_weight=pos_weight).to(device)
 
     def evaluate_model_fn(model):
         return evaluate(model, shared_test, device, max_batches=max_batches, loss_fn=eval_loss_fn)

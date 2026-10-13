@@ -41,6 +41,7 @@ class ByzantineClient(FLClient):
         local_epochs: int = 1,
         severity_weight: float = 1.0,
         max_batches: int | None = None,
+        pos_weight: torch.Tensor | None = None,
     ) -> None:
         if attack_type not in ATTACK_TYPES:
             raise ValueError(f"unknown attack {attack_type!r}; choose from {sorted(ATTACK_TYPES)}")
@@ -48,6 +49,7 @@ class ByzantineClient(FLClient):
             node_id=node_id, model=model, train_loader=train_loader,
             optimizer_fn=optimizer_fn, device=device, local_epochs=local_epochs,
             severity_weight=severity_weight, max_batches=max_batches,
+            pos_weight=pos_weight,
         )
         self.attack_type = attack_type
         self.num_clients = num_clients

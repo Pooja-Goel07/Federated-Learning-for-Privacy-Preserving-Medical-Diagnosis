@@ -16,7 +16,7 @@ from src.models.engine import evaluate, train_one_epoch
 
 from .builders import build_model, build_optimizer
 from .config import cfg_get
-from .data_setup import build_data_context, centralized_loaders
+from .data_setup import build_data_context, centralized_loaders, compute_pos_weight
 from .utils import get_device, save_json, set_seed
 
 
@@ -30,8 +30,13 @@ def run_centralized(config: dict, data_root: str | Path | None = None) -> dict:
 
     model = build_model(config).to(device)
     optimizer = build_optimizer(config, model)
+    pos_weight = None
+    if bool(cfg_get(config, "training.class_balanced", False)):
+        train_files = [f for files in ctx.manifest.nodes.values() for f in files]
+        pos_weight = compute_pos_weight(ctx.data_entry, train_files)
     loss_fn = DualHeadLoss(
-        severity_weight=float(cfg_get(config, "training.severity_weight", 1.0))
+        severity_weight=float(cfg_get(config, "training.severity_weight", 1.0)),
+        pos_weight=pos_weight,
     ).to(device)
 
     epochs = int(cfg_get(config, "training.local_epochs", cfg_get(config, "training.epochs", 1)))

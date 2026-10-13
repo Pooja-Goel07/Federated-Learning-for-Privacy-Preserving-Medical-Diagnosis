@@ -98,4 +98,6 @@ Template for each experiment entry:
   Report generator hardened to explain the inversion instead of printing a nonsensical "gap closed %".
   **A fair-epochs re-run (EXP-003) should replace these numbers for Review 2.**
 
-_Next: EXP-003 = fair-epochs re-run (baselines = 10 epochs); then DP + robust + composition on real data._
+_Next: EXP-003 = properly-trained re-run on **Kaggle** — class-balanced BCE (per-class pos_weight),
+~30k-image subset, baseline epochs matched to rounds (fair ceiling). Config `configs/kaggle_real.yaml`,
+notebook `notebooks/kaggle_training.ipynb`. Then DP + robust + composition on real data._

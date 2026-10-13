@@ -6,6 +6,53 @@
 
 ---
 
+## 2026-10-13 — Session 8 (switch Colab→Kaggle; EXP-002 review; class-balanced "train to best")
+
+**Context:** user ran the Colab notebook — hit a dataset 404 (fixed, see Session 7 note), got
+EXP-002 real-data results, but then (a) Colab was flaky so switched to **Kaggle**, (b) wanted a
+**direct zip download** of results, and (c) asked whether models are trained to their best.
+
+**EXP-002 review (results/fl-medical-results/colab):** centralised 0.573 / federated 0.674 /
+single-site 0.557 mean AUC. Federated beats the isolated floor (good, core FL claim holds) BUT came
+out ABOVE centralised — a **training-budget artefact** (baselines 3 epochs vs federation 10 rounds),
+not a real inversion. Report generator was printing a nonsense "760% gap closed". Logged as EXP-002
+in study.md with the caveat; **recommend a fair-epochs re-run (EXP-003)**.
+
+**Fixes / improvements this session:**
+- `src/evaluation/report.py` — headline line now adapts to the actual ordering (explains fed>ceiling
+  as a budget artefact instead of printing an absurd %). Regenerated the EXP-002 report in place.
+- **Switched Colab → Kaggle.** Deleted `notebooks/colab_training.ipynb` + `configs/colab_real.yaml`.
+  New `notebooks/kaggle_training.ipynb` (15 cells) + `configs/kaggle_real.yaml`:
+  - Kaggle *mounts* datasets (no token/download). Notebook auto-discovers the label CSVs and the
+    image folder from `/kaggle/input` (picks the mount with the most PNGs → resized mirror if added,
+    else official full-res). Needs sidebar: GPU on, Internet on, + Add Input `nih-chest-xrays/data`
+    (CSVs) and optionally `khanfashee/nih-chest-x-ray-14-224x224-resized` (faster 224px images).
+  - **Direct download:** zips results to `/kaggle/working/fl_results.zip` and shows an IPython
+    `FileLink` to click. Also works via Save & Run All (Commit) → Output.
+- **"Train to best" levers (all tested):**
+  - `data.image_root` (new) — images can live on a different root than the CSVs (Kaggle split mounts).
+  - `training.class_balanced` (new, default false) — per-class BCE `pos_weight` = neg/pos (clamped 50),
+    the biggest AUC lever on NIH. `compute_pos_weight()` added to data_setup; `pos_weight` threaded
+    through FLClient/DPFLClient/ByzantineClient and centralized/single_site/federated (+eval loss).
+    Loss already supported pos_weight; this just feeds it. Opt-in, so demo/tests unchanged.
+  - Kaggle config scaled up: 30k subset, 224px, class-balanced, baseline epochs == rounds == 12
+    (fair ceiling). Dial `max_images`/`rounds` for more.
+
+**Verification:** all 6 test scripts pass (client ctor changes safe); synthetic suite exercised with
+`class_balanced=true` + `image_root` set → OK; Kaggle notebook validated (15 cells, GPU+Internet,
+%cd + FileLink present).
+
+**IMPORTANT (git):** push before running on Kaggle — new `configs/kaggle_real.yaml`,
+`notebooks/kaggle_training.ipynb`, and changes to `src/experiments/{data_setup,centralized,single_site,
+federated}.py`, `src/federated/client.py`, `src/privacy/client.py`, `src/attacks/byzantine/clients.py`,
+`src/evaluation/report.py`. Deleted colab notebook+config.
+
+**Exact next step:** user runs `notebooks/kaggle_training.ipynb` (GPU+Internet+inputs) to get the
+fair, class-balanced real numbers = **EXP-003**. Then remaining tasks: 10 (DP×robust composition on
+real data), 11 (privacy audit — unbuilt), 12 (metrics consolidation), 13 (FastAPI), 14 (React), 15 (Review 2).
+
+---
+
 ## 2026-10-13 — Session 7 (synthetic demo + real-data Colab run prep)
 
 **Context:** user asked to (a) run the whole architecture on a small synthetic dataset with
