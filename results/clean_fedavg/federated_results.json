@@ -1,0 +1,632 @@
+{
+  "run_type": "federated",
+  "config_source": "configs/kaggle_defences.yaml",
+  "seed": 42,
+  "device": "cuda",
+  "strategy": "fedavg",
+  "backbone": "densenet121",
+  "num_rounds": 8,
+  "local_epochs": 1,
+  "heterogeneity_mitigation": {
+    "fedprox_mu": 0.0,
+    "fedbn": false
+  },
+  "attack": {
+    "enabled": false,
+    "type": "none",
+    "fraction": 0.0,
+    "num_malicious": 0,
+    "malicious_nodes": []
+  },
+  "privacy": {
+    "dp_enabled": false,
+    "max_grad_norm": 1.0,
+    "noise_multiplier": 1.0,
+    "target_delta": 1e-05,
+    "final_epsilon": null
+  },
+  "partition": {
+    "scheme": "dirichlet",
+    "num_nodes": 6,
+    "alpha": 0.5,
+    "node_sizes": {
+      "0": 3887,
+      "1": 4130,
+      "2": 1921,
+      "3": 726,
+      "4": 735,
+      "5": 1106
+    },
+    "test_size": 3433
+  },
+  "history": [
+    {
+      "round": 0,
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.5082010970231087,
+            "Cardiomegaly": 0.4631270721084522,
+            "Effusion": 0.5148737594246171,
+            "Infiltration": 0.5189161558469373,
+            "Mass": 0.5709474236724696,
+            "Nodule": 0.47311622704451073,
+            "Pneumonia": 0.49270330662124884,
+            "Pneumothorax": 0.5050592817703207,
+            "Consolidation": 0.4988105244976683,
+            "Edema": 0.5504367215842133,
+            "Emphysema": 0.5925022893772893,
+            "Fibrosis": 0.48538872955584844,
+            "Pleural_Thickening": 0.44517710550319245,
+            "Hernia": 0.6587226277372262
+          },
+          "mean_auc": 0.5198558801262216,
+          "mean_accuracy": 0.35876576089218093
+        },
+        "severity": {
+          "severity_mae": 0.9550561797752809,
+          "severity_qwk": 0.05473580396768196,
+          "n": 178
+        },
+        "loss": 2.2854063808918
+      },
+      "clients": []
+    },
+    {
+      "round": 1,
+      "aggregate_metrics": {
+        "train_loss": 2.1148324876178974
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 2.053520627686235
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 2.0428138146033654
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 2.2618771890799203
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 2.1790226957072383
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 2.0811272859573364
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 2.3241043499537875
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.5223968810988256,
+            "Cardiomegaly": 0.5787816094497366,
+            "Effusion": 0.5121656197478006,
+            "Infiltration": 0.5471412639996118,
+            "Mass": 0.5660542967952643,
+            "Nodule": 0.4961329967373481,
+            "Pneumonia": 0.5039140118348364,
+            "Pneumothorax": 0.5747553824423234,
+            "Consolidation": 0.5408043065231158,
+            "Edema": 0.6042961619335906,
+            "Emphysema": 0.5872367216117217,
+            "Fibrosis": 0.5916440586001085,
+            "Pleural_Thickening": 0.5340191209756426,
+            "Hernia": 0.2136131386861314
+          },
+          "mean_auc": 0.5266396836025755,
+          "mean_accuracy": 0.6233614914069328
+        },
+        "severity": {
+          "severity_mae": 0.7696629213483146,
+          "severity_qwk": -0.048756156867635125,
+          "n": 178
+        },
+        "loss": 2.017005509248486
+      }
+    },
+    {
+      "round": 2,
+      "aggregate_metrics": {
+        "train_loss": 2.0280038568330787
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 1.9378325914750334
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 1.9247479521311246
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 2.297529798746109
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 2.0769658892051033
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 1.9923959296682607
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 2.253870630264282
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.5610786739123652,
+            "Cardiomegaly": 0.5972079318191037,
+            "Effusion": 0.560282339464616,
+            "Infiltration": 0.5542867445103786,
+            "Mass": 0.548496048756306,
+            "Nodule": 0.585841837453441,
+            "Pneumonia": 0.49229207153306986,
+            "Pneumothorax": 0.6198163763215341,
+            "Consolidation": 0.544520697794922,
+            "Edema": 0.6647122027866996,
+            "Emphysema": 0.5892470810439561,
+            "Fibrosis": 0.6247345167041314,
+            "Pleural_Thickening": 0.5293718962197222,
+            "Hernia": 0.6056934306569344
+          },
+          "mean_auc": 0.5769701320697986,
+          "mean_accuracy": 0.6354084307769131
+        },
+        "severity": {
+          "severity_mae": 0.7640449438202247,
+          "severity_qwk": 0.1093041438623924,
+          "n": 178
+        },
+        "loss": 1.9917021377219095
+      }
+    },
+    {
+      "round": 3,
+      "aggregate_metrics": {
+        "train_loss": 1.9635788066869253
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 1.9577026435586273
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 1.8147054988604325
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 2.213794070482254
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 1.95701961931975
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 1.9515355203462683
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 2.117862415313721
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.5599624696539189,
+            "Cardiomegaly": 0.5878398811038461,
+            "Effusion": 0.5727531149357294,
+            "Infiltration": 0.5924938571958026,
+            "Mass": 0.5600778584550783,
+            "Nodule": 0.5710979190028345,
+            "Pneumonia": 0.5346310893726662,
+            "Pneumothorax": 0.6644788768565681,
+            "Consolidation": 0.5722332891933904,
+            "Edema": 0.728005060424706,
+            "Emphysema": 0.652312271062271,
+            "Fibrosis": 0.641655685605767,
+            "Pleural_Thickening": 0.5644762845849802,
+            "Hernia": 0.3594160583941606
+          },
+          "mean_auc": 0.5829595511315514,
+          "mean_accuracy": 0.6296450418209812
+        },
+        "severity": {
+          "severity_mae": 0.8651685393258427,
+          "severity_qwk": 0.06940961448548488,
+          "n": 178
+        },
+        "loss": 1.9966140770249896
+      }
+    },
+    {
+      "round": 4,
+      "aggregate_metrics": {
+        "train_loss": 1.9124293609382232
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 1.8450486757716194
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 1.8276136549619528
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 2.15529842376709
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 1.9136438991712488
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 1.8646949866543645
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 2.075041593824114
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.5945099158455941,
+            "Cardiomegaly": 0.6152488742850188,
+            "Effusion": 0.5965162953156249,
+            "Infiltration": 0.5989495532924343,
+            "Mass": 0.572110926428134,
+            "Nodule": 0.6022198993593031,
+            "Pneumonia": 0.5101862567417079,
+            "Pneumothorax": 0.6591456576638275,
+            "Consolidation": 0.5805734354309402,
+            "Edema": 0.7400408993229661,
+            "Emphysema": 0.6520718864468865,
+            "Fibrosis": 0.6829315556933571,
+            "Pleural_Thickening": 0.5535919394615048,
+            "Hernia": 0.30770072992700725
+          },
+          "mean_auc": 0.5904141303724505,
+          "mean_accuracy": 0.6533019849361241
+        },
+        "severity": {
+          "severity_mae": 0.6797752808988764,
+          "severity_qwk": 0.23140245442149376,
+          "n": 178
+        },
+        "loss": 1.9921617105051324
+      }
+    },
+    {
+      "round": 5,
+      "aggregate_metrics": {
+        "train_loss": 1.9225736775420643
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 1.7791027778484783
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 1.8235127935042748
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 2.2375024835268658
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 2.186405650947405
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 1.9098320059154346
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 2.0849947605814254
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.5996634054860399,
+            "Cardiomegaly": 0.5930443537234337,
+            "Effusion": 0.5984038008319015,
+            "Infiltration": 0.5932233805543541,
+            "Mass": 0.5959204502376578,
+            "Nodule": 0.6066588528312944,
+            "Pneumonia": 0.5452431381968251,
+            "Pneumothorax": 0.6658639729486795,
+            "Consolidation": 0.5772341528009672,
+            "Edema": 0.7550719781870278,
+            "Emphysema": 0.6479624542124541,
+            "Fibrosis": 0.718595457716456,
+            "Pleural_Thickening": 0.5810487821357386,
+            "Hernia": 0.6698905109489052
+          },
+          "mean_auc": 0.6248446207722668,
+          "mean_accuracy": 0.6599600516000167
+        },
+        "severity": {
+          "severity_mae": 0.8033707865168539,
+          "severity_qwk": 0.17560033364063388,
+          "n": 178
+        },
+        "loss": 2.0317390726672278
+      }
+    },
+    {
+      "round": 6,
+      "aggregate_metrics": {
+        "train_loss": 1.8115516413828703
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 1.7203241386374488
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 1.7072203764548668
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 2.0520780106385548
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 1.8976462664811506
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 1.7964791888776033
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 2.0574936185564314
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.5952268979805485,
+            "Cardiomegaly": 0.6424891485132449,
+            "Effusion": 0.6333112682271861,
+            "Infiltration": 0.5985028038962571,
+            "Mass": 0.606755022890969,
+            "Nodule": 0.5967680586939249,
+            "Pneumonia": 0.5631118486654876,
+            "Pneumothorax": 0.6790848777982279,
+            "Consolidation": 0.5867062007024009,
+            "Edema": 0.7445034313838759,
+            "Emphysema": 0.6595066391941391,
+            "Fibrosis": 0.6744748469110923,
+            "Pleural_Thickening": 0.5714122833688051,
+            "Hernia": 0.6077372262773723
+          },
+          "mean_auc": 0.6256850396073952,
+          "mean_accuracy": 0.6683658607631809
+        },
+        "severity": {
+          "severity_mae": 0.7134831460674157,
+          "severity_qwk": 0.21985917516884612,
+          "n": 178
+        },
+        "loss": 2.00027914069317
+      }
+    },
+    {
+      "round": 7,
+      "aggregate_metrics": {
+        "train_loss": 1.8001939505209397
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 1.6899429667191428
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 1.6941826077607962
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 1.9977394978205363
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 1.9829436177792756
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 1.786256518052972
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 2.1297194276537215
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.6184892418015029,
+            "Cardiomegaly": 0.6293216944914646,
+            "Effusion": 0.6468827169187723,
+            "Infiltration": 0.5985605299418305,
+            "Mass": 0.622704341993993,
+            "Nodule": 0.5855622016983822,
+            "Pneumonia": 0.5418404407857865,
+            "Pneumothorax": 0.6786003509823225,
+            "Consolidation": 0.60515170706431,
+            "Edema": 0.7487117868613814,
+            "Emphysema": 0.6771920787545788,
+            "Fibrosis": 0.7088132702891248,
+            "Pleural_Thickening": 0.5885126347082869,
+            "Hernia": 0.6821167883211678
+          },
+          "mean_auc": 0.6380328417580646,
+          "mean_accuracy": 0.6459364986891931
+        },
+        "severity": {
+          "severity_mae": 0.7696629213483146,
+          "severity_qwk": 0.12234069179556495,
+          "n": 178
+        },
+        "loss": 2.086569504053504
+      }
+    },
+    {
+      "round": 8,
+      "aggregate_metrics": {
+        "train_loss": 1.7595709472934795
+      },
+      "clients": [
+        {
+          "num_examples": 3887,
+          "node_id": "0",
+          "train_loss": 1.633520759031421
+        },
+        {
+          "num_examples": 4130,
+          "node_id": "1",
+          "train_loss": 1.6465228369602791
+        },
+        {
+          "num_examples": 1921,
+          "node_id": "2",
+          "train_loss": 1.9949172218640645
+        },
+        {
+          "num_examples": 726,
+          "node_id": "3",
+          "train_loss": 2.097889568494714
+        },
+        {
+          "num_examples": 735,
+          "node_id": "4",
+          "train_loss": 1.9819574537484541
+        },
+        {
+          "num_examples": 1106,
+          "node_id": "5",
+          "train_loss": 1.8460738250187465
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.6234590083807758,
+            "Cardiomegaly": 0.6879141912000619,
+            "Effusion": 0.6581307568800878,
+            "Infiltration": 0.603537937306168,
+            "Mass": 0.6149680692852769,
+            "Nodule": 0.6058291024044449,
+            "Pneumonia": 0.5491298556674018,
+            "Pneumothorax": 0.6990805975260026,
+            "Consolidation": 0.600444470032817,
+            "Edema": 0.7499682279270745,
+            "Emphysema": 0.7048076923076924,
+            "Fibrosis": 0.7376249903108285,
+            "Pleural_Thickening": 0.5775501672240803,
+            "Hernia": 0.5776642335766423
+          },
+          "mean_auc": 0.6421506642878111,
+          "mean_accuracy": 0.6953310307519454
+        },
+        "severity": {
+          "severity_mae": 0.702247191011236,
+          "severity_qwk": 0.24600448779594264,
+          "n": 178
+        },
+        "loss": 2.0159585895361722
+      }
+    }
+  ],
+  "final_test_metrics": {
+    "pathology": {
+      "per_pathology_auc": {
+        "Atelectasis": 0.6234590083807758,
+        "Cardiomegaly": 0.6879141912000619,
+        "Effusion": 0.6581307568800878,
+        "Infiltration": 0.603537937306168,
+        "Mass": 0.6149680692852769,
+        "Nodule": 0.6058291024044449,
+        "Pneumonia": 0.5491298556674018,
+        "Pneumothorax": 0.6990805975260026,
+        "Consolidation": 0.600444470032817,
+        "Edema": 0.7499682279270745,
+        "Emphysema": 0.7048076923076924,
+        "Fibrosis": 0.7376249903108285,
+        "Pleural_Thickening": 0.5775501672240803,
+        "Hernia": 0.5776642335766423
+      },
+      "mean_auc": 0.6421506642878111,
+      "mean_accuracy": 0.6953310307519454
+    },
+    "severity": {
+      "severity_mae": 0.702247191011236,
+      "severity_qwk": 0.24600448779594264,
+      "n": 178
+    },
+    "loss": 2.0159585895361722
+  }
+}

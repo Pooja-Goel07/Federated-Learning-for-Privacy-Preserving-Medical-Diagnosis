@@ -17,6 +17,8 @@ from genuine runs; only the config varies.
 from __future__ import annotations
 
 import copy
+import json
+import math
 import traceback
 from pathlib import Path
 
@@ -104,13 +106,34 @@ def default_defence_variants(
     return variants
 
 
+def _load_completed(out_dir: Path, name: str) -> dict | None:
+    """Return a saved run's results dict if the variant already finished, else None."""
+    path = out_dir / name / "federated_results.json"
+    if not path.exists():
+        return None
+    try:
+        res = json.loads(path.read_text())
+    except Exception:
+        return None
+    auc = res.get("final_test_metrics", {}).get("pathology", {}).get("mean_auc")
+    if auc is None or (isinstance(auc, float) and math.isnan(auc)):
+        return None  # incomplete/invalid -> re-run
+    return res
+
+
 def run_sweep(
     base_config: dict,
     variants: list[dict],
     out_dir: str | Path,
     data_root: str | Path | None = None,
+    resume: bool = True,
 ) -> dict:
-    """Run every variant via run_federated; collect results into sweep_results.json."""
+    """Run every variant via run_federated; collect results into sweep_results.json.
+
+    With ``resume=True`` (default), a variant whose ``federated_results.json`` already
+    exists and is valid is loaded instead of re-run — so re-running the sweep after a
+    crash only redoes the failed/missing variant.
+    """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     runs: list[dict] = []
@@ -119,6 +142,13 @@ def run_sweep(
         for key, val in v["overrides"].items():
             _set(cfg, key, val)
         _set(cfg, "experiment.output_dir", str(out_dir / v["name"]))
+        done = _load_completed(out_dir, v["name"]) if resume else None
+        if done is not None:
+            print(f"[sweep] ({i}/{len(variants)}) {v['name']}: reusing saved result "
+                  f"(auc={done['final_test_metrics']['pathology']['mean_auc']:.3f})")
+            runs.append(_summarize(v["name"], v["group"], done))
+            save_json({"runs": runs}, out_dir / "sweep_results.json")
+            continue
         print(f"\n{'='*70}\n[sweep] ({i}/{len(variants)}) {v['name']}  [group={v['group']}]  "
               f"strategy={cfg_get(cfg,'federated.strategy')} "
               f"attack={cfg_get(cfg,'attack.enabled')} dp={cfg_get(cfg,'privacy.dp.enabled')}\n{'='*70}")

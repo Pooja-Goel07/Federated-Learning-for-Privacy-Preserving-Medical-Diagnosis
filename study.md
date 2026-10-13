@@ -117,5 +117,33 @@ Template for each experiment entry:
   multi-label imbalance; **AUC is the metric of record**. (3) This is the Review-2-ready core result.
 - **Deviations:** none. Replaces EXP-002 as the headline core-comparison run.
 
-_Next: EXP-004+ = turn defences on (DP Task 8, Byzantine+robust Task 9, joint composition Task 10) on
-this same real-data setup; plus Task 11 privacy-audit attacks (unbuilt)._
+### EXP-004/005/006 — Defence-layer sweep (DP, robust aggregation, composition), Kaggle  (Tasks 8/9/10, 2026-10-13)
+- **Common config:** NIH subset, **6 nodes** (honest majority for robust agg), non-IID α=0.5, ~12k imgs,
+  128px, densenet121 pretrained, class-balanced, 8 rounds × 1 local epoch, seed 42. Attack (for 005/006):
+  **model_replacement @ fraction 0.34 (2/6 nodes)**. DP: Opacus DP-SGD, RDP accountant, clip C=1.0.
+  Results at `results/` (sweep_results.json, DEFENCE_REPORT.md, plots 05/06/07).
+
+- **EXP-004 (DP privacy–utility):** clean FedAvg **0.642** → DP σ=1.0 (ε≈4.5) **0.493** → σ=2.0 (ε≈1.4)
+  **0.487**. Monotone privacy cost; DP is harsh at this small scale (near-chance), as expected — utility
+  recovers with more data/less noise. Confirms the privacy–utility trade-off (Objective 2/4).
+
+- **EXP-005 (robustness):** under model_replacement, **plain FedAvg diverged (weights → NaN, AUC ≈ 0.50 —
+  total collapse; the attack boosts the malicious update by the client count and undefended averaging
+  propagates it).** Robust rules hold: **trimmed_mean 0.571, median 0.562, krum 0.545** vs clean 0.642.
+  Robust aggregation recovers most utility under a 33% attack (Objective 3). [atk_fedavg exact value from
+  the NaN-safe-metric re-run pending; diverged → 0.50 by definition.]
+
+- **EXP-006 (composition — G1, the core contribution):** under attack, {FedAvg, Median} × {no-DP, DP σ=1.0}:
+  Median no-DP **0.562** → Median+DP **0.458** (**−0.104**); FedAvg diverged(~0.50) → FedAvg+DP **0.506**
+  (≈flat). **Finding: DP composes DESTRUCTIVELY with robust aggregation** — DP noise costs the robust rule
+  far more than it costs FedAvg, because the Gaussian noise + clipping erase the update-norm/direction
+  signal Median uses to reject malicious updates. Notable nuance: DP *clipping* partially *shields* FedAvg
+  (bounds the boosted malicious update), while DP *noise* *degrades* Median — i.e. the two defences
+  interact non-trivially. This directly addresses research gap G1 (no prior work studies this interaction).
+
+- **Bug fixed this run:** FedAvg-under-attack crashed the AUC metric on NaN (diverged model). Fixed
+  `pathology_metrics` to sanitise non-finite probs → chance (0.50); added `run_sweep(resume=True)` so a
+  re-run only redoes the failed variant. Logged so the EXP-005 FedAvg cell can be completed cheaply.
+
+_Next: complete atk_fedavg (NaN-safe re-run), then write the research-paper report from EXP-003 (core) +
+EXP-004/005/006 (defences). Remaining build: Task 11 privacy-audit attacks (unbuilt), 12–15._

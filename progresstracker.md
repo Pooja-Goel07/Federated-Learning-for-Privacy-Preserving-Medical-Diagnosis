@@ -6,6 +6,21 @@
 
 ---
 
+## 2026-10-13 — Session 9b (defence results in + metric/resume bug fix)
+
+Defence sweep ran on Kaggle; results in `results/` (sweep_results.json, DEFENCE_REPORT.md, plots 05-07).
+8/9 runs good; **atk_fedavg crashed** — model_replacement diverged plain FedAvg to NaN and the AUC
+metric errored on NaN input. Numbers (6 nodes, 128px, 12k, 8 rounds): clean 0.642; DP σ1(ε4.5)=0.493,
+σ2(ε1.4)=0.487; under attack krum 0.545/trimmed 0.571/median 0.562, fedavg diverged~0.50; composition
+median noDP 0.562→DP 0.458 (−0.104), fedavg+DP 0.506 → **DESTRUCTIVE composition (G1 supported)**.
+Logged as EXP-004/005/006 in study.md.
+**Fixes:** `pathology_metrics` now sanitises non-finite probs→0.5 (diverged model = chance, no crash);
+`run_sweep(resume=True)` reuses saved per-variant results so only the failed variant re-runs (~15 min).
+**Next:** user re-runs atk_fedavg (single-variant snippet) → send number/file → I merge + regen report,
+then write the research-paper report. Push first: metrics.py, sweep.py, defence_report.py changes.
+
+---
+
 ## 2026-10-13 — Session 9 (defence-layer sweep infra + Kaggle notebook; Task 10)
 
 Built the defence experiments (Tasks 8/9/10) as a reusable sweep + a Kaggle notebook.

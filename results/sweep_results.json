@@ -1,0 +1,504 @@
+{
+  "runs": [
+    {
+      "name": "clean_fedavg",
+      "group": "dp",
+      "strategy": "fedavg",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": false,
+        "type": "none",
+        "fraction": 0.0,
+        "num_malicious": 0,
+        "malicious_nodes": []
+      },
+      "mean_auc": 0.6421506642878111,
+      "mean_accuracy": 0.6953310307519454,
+      "severity": {
+        "severity_mae": 0.702247191011236,
+        "severity_qwk": 0.24600448779594264,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5266396836025755
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5769701320697986
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5829595511315514
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5904141303724505
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.6248446207722668
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.6256850396073952
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.6380328417580646
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.6421506642878111
+        }
+      ]
+    },
+    {
+      "name": "dp_sigma1.0",
+      "group": "dp",
+      "strategy": "fedavg",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": false,
+        "type": "none",
+        "fraction": 0.0,
+        "num_malicious": 0,
+        "malicious_nodes": []
+      },
+      "mean_auc": 0.4925198344401355,
+      "mean_accuracy": 0.9139236819108651,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.48898943517899773
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.4900740771652294
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.48748983043571986
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.4864410914168313
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.48747347276153097
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.4916726908599122
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.4934042114476379
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.4925198344401355
+        }
+      ]
+    },
+    {
+      "name": "dp_sigma2.0",
+      "group": "dp",
+      "strategy": "fedavg",
+      "dp_enabled": true,
+      "noise_multiplier": 2.0,
+      "epsilon": 1.4190403097856696,
+      "attack": {
+        "enabled": false,
+        "type": "none",
+        "fraction": 0.0,
+        "num_malicious": 0,
+        "malicious_nodes": []
+      },
+      "mean_auc": 0.48725272753636384,
+      "mean_accuracy": 0.9139236819108651,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.4833863852908986
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.4879724469732255
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.48996056941949756
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.4861296496831544
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.4850720223110737
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.48689680745737907
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.48854798405012934
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.48725272753636384
+        }
+      ]
+    },
+    {
+      "name": "atk_fedavg",
+      "group": "robust",
+      "error": "Traceback (most recent call last):\n  File \"/kaggle/working/fl/src/experiments/sweep.py\", line 126, in run_sweep\n    res = run_federated(cfg, data_root=data_root)\n  File \"/kaggle/working/fl/src/experiments/federated.py\", line 121, in run_federated\n    history, final_params = run_federated_rounds(\n                            ~~~~~~~~~~~~~~~~~~~~^\n        global_model, clients, strategy, num_rounds, evaluate_model_fn, fedbn=fedbn\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/kaggle/working/fl/src/federated/simulation.py\", line 96, in run_federated_rounds\n    test_metrics = eval_current(parameters)\n  File \"/kaggle/working/fl/src/federated/simulation.py\", line 62, in eval_current\n    return evaluate_model_fn(global_model)\n  File \"/kaggle/working/fl/src/experiments/federated.py\", line 119, in evaluate_model_fn\n    return evaluate(model, shared_test, device, max_batches=max_batches, loss_fn=eval_loss_fn)\n  File \"/usr/local/lib/python3.13/dist-packages/torch/utils/_contextlib.py\", line 124, in decorate_context\n    return func(*args, **kwargs)\n  File \"/kaggle/working/fl/src/models/engine.py\", line 115, in evaluate\n    results[\"pathology\"] = pathology_metrics(\n                           ~~~~~~~~~~~~~~~~~^\n        np.concatenate(path_logits), np.concatenate(path_targets)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/kaggle/working/fl/src/evaluation/metrics.py\", line 30, in pathology_metrics\n    auc = float(roc_auc_score(y, probs[:, i]))\n                ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/_param_validation.py\", line 216, in wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/metrics/_ranking.py\", line 620, in roc_auc_score\n    y_score = check_array(y_score, ensure_2d=False)\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/validation.py\", line 1107, in check_array\n    _assert_all_finite(\n    ~~~~~~~~~~~~~~~~~~^\n        array,\n        ^^^^^^\n    ...<2 lines>...\n        allow_nan=ensure_all_finite == \"allow-nan\",\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/validation.py\", line 120, in _assert_all_finite\n    _assert_all_finite_element_wise(\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        X,\n        ^^\n    ...<4 lines>...\n        input_name=input_name,\n        ^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/validation.py\", line 169, in _assert_all_finite_element_wise\n    raise ValueError(msg_err)\nValueError: Input contains NaN.\n"
+    },
+    {
+      "name": "atk_krum",
+      "group": "robust",
+      "strategy": "krum",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.5446311811180105,
+      "mean_accuracy": 0.7168865215762973,
+      "severity": {
+        "severity_mae": 0.8426966292134831,
+        "severity_qwk": 0.09691687264212301,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5014969515831612
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.513515267192869
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5159045426150429
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.516450910834969
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5485987817444377
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5431622503793628
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5541098212991226
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.5446311811180105
+        }
+      ]
+    },
+    {
+      "name": "atk_trimmed_mean",
+      "group": "robust",
+      "strategy": "trimmed_mean",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.570842859948381,
+      "mean_accuracy": 0.37008447422079815,
+      "severity": {
+        "severity_mae": 0.7921348314606742,
+        "severity_qwk": 0.2275591487338009,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5064559610346148
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5147894661777184
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5410660879859106
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5508291958689255
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5458221198428184
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5641131914425925
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5648890552288885
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.570842859948381
+        }
+      ]
+    },
+    {
+      "name": "atk_median",
+      "group": "robust",
+      "strategy": "median",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.5620480233517892,
+      "mean_accuracy": 0.3536473721443136,
+      "severity": {
+        "severity_mae": 0.8707865168539326,
+        "severity_qwk": 0.14559446538924947,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5101078216108763
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5277279317290556
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5296563182521447
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5430941110097133
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5507259611224721
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5509433845572274
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5617353707453329
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.5620480233517892
+        }
+      ]
+    },
+    {
+      "name": "atk_fedavg_dp",
+      "group": "composition",
+      "strategy": "fedavg",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.5063397210617147,
+      "mean_accuracy": 0.6374266572344056,
+      "severity": {
+        "severity_mae": 0.6685393258426966,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.502229296318638
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5027743593895663
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5166805452164744
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5010145055920343
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5095645919896954
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5026580444283721
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5015972371930005
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.5063397210617147
+        }
+      ]
+    },
+    {
+      "name": "atk_median_dp",
+      "group": "composition",
+      "strategy": "median",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.45786376377855964,
+      "mean_accuracy": 0.08607631808913487,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.46804263481286446
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.4541130992377072
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.44704917386970594
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.4386880878133837
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.44033888455666276
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.4517031489072535
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.44903111134559187
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.45786376377855964
+        }
+      ]
+    }
+  ]
+}

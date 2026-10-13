@@ -18,8 +18,16 @@ from src.data.constants import PATHOLOGIES, SEVERITY_IGNORE_INDEX
 
 
 def pathology_metrics(logits: np.ndarray, targets: np.ndarray) -> dict:
-    """logits/targets: (N, 14). Returns per-class + mean AUC and mean accuracy."""
-    probs = 1.0 / (1.0 + np.exp(-logits))
+    """logits/targets: (N, 14). Returns per-class + mean AUC and mean accuracy.
+
+    Robust to a diverged model: a poisoning attack (e.g. model_replacement) with no
+    robust defence can blow the global weights up to NaN/Inf. We sanitise the resulting
+    probabilities to chance (0.5) so metrics report an honest ~0.5 ("no better than
+    random / model destroyed") instead of crashing sklearn on NaN input.
+    """
+    with np.errstate(over="ignore", invalid="ignore"):
+        probs = 1.0 / (1.0 + np.exp(-logits))
+    probs = np.nan_to_num(probs, nan=0.5, posinf=1.0, neginf=0.0)
     per_class_auc: dict[str, float] = {}
     aucs: list[float] = []
     for i, name in enumerate(PATHOLOGIES):

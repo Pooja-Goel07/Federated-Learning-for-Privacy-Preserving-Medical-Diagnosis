@@ -205,7 +205,8 @@ def generate_defence_report(out_dir: str | Path, robust_rule: str = "median") ->
         row(f"atk_{rr}_dp", f"{rr.title()}, DP on"),
     ]))
 
-    atk = (runs.get("atk_fedavg") or {}).get("attack", {})
+    atk = next((r["attack"] for r in runs.values()
+                if r.get("attack", {}).get("type") not in (None, "none")), {})
     md = f"""# Defence-Layer Results — DP, Robust Aggregation, and their Composition
 
 Real federated runs on the NIH ChestX-ray14 subset (see `sweep_results.json`). Clean
