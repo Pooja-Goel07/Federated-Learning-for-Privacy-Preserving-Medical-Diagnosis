@@ -98,6 +98,24 @@ Template for each experiment entry:
   Report generator hardened to explain the inversion instead of printing a nonsensical "gap closed %".
   **A fair-epochs re-run (EXP-003) should replace these numbers for Review 2.**
 
-_Next: EXP-003 = properly-trained re-run on **Kaggle** — class-balanced BCE (per-class pos_weight),
-~30k-image subset, baseline epochs matched to rounds (fair ceiling). Config `configs/kaggle_real.yaml`,
-notebook `notebooks/kaggle_training.ipynb`. Then DP + robust + composition on real data._
+### EXP-003 — Properly-trained core run on real NIH (Kaggle GPU), class-balanced, defences OFF  (Tasks 4/5/6, 2026-10-13)
+- **Config:** NIH ChestX-ray14, patient-aware subsample ~30k images, 3 nodes, non-IID Dirichlet α=0.5,
+  test_frac 0.2, densenet121 pretrained, Adam lr 1e-4, batch 32, **class-balanced BCE (per-class
+  pos_weight)**, **baseline epochs = rounds = 12** (fair ceiling), seed 42. Plain FedAvg; no DP/robust/
+  attacks. Results at `results/` (summary.json, REPORT.md, plots/).
+- **Metrics (mean ROC-AUC, shared test set):** centralised **0.772** · federated FedAvg **0.754**
+  · single-site floor **0.721** (nodes 0.713/0.731/0.718). **Ordering now correct: floor < federated
+  < ceiling**; federation closes **66%** of the floor→ceiling gap. Federated per-pathology: Edema 0.86,
+  Cardiomegaly 0.84, Pneumothorax 0.83, Effusion 0.81, Fibrosis 0.81 … Nodule 0.68, Hernia 0.67.
+  Federated AUC rises 0.49→0.76 over 12 rounds. Severity (proxy, n=187): federated MAE 0.63 / QWK 0.42
+  vs centralised 0.59 / 0.39.
+- **Observations:** (1) The two fixes vs EXP-002 worked exactly as intended — class-balancing lifted
+  absolute AUC from ~0.57–0.67 into the **0.72–0.77** range (credible for a 30k subset; full-data
+  literature ~0.75–0.84), and matching baseline epochs to rounds restored centralised as a true ceiling.
+  (2) **Note on accuracy:** centralised mean_accuracy fell (0.93→0.72) because pos_weight makes the model
+  predict positives instead of the all-negative shortcut — raw accuracy is misleading under heavy
+  multi-label imbalance; **AUC is the metric of record**. (3) This is the Review-2-ready core result.
+- **Deviations:** none. Replaces EXP-002 as the headline core-comparison run.
+
+_Next: EXP-004+ = turn defences on (DP Task 8, Byzantine+robust Task 9, joint composition Task 10) on
+this same real-data setup; plus Task 11 privacy-audit attacks (unbuilt)._

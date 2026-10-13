@@ -1,0 +1,82 @@
+# Defence-layer sweep base config (Tasks 8/9/10) — Kaggle GPU.
+#
+# The sweep (src.experiments.sweep.run_sweep) overrides only the defence knobs per run:
+#   federated.strategy, attack.*, privacy.dp.*  — everything else below is held fixed.
+#
+# Smaller/faster than the core run (kaggle_real.yaml) because it runs ~9 federated runs,
+# some with DP (Opacus per-sample grads are slow): 6 nodes, ~12k images, 128px, 8 rounds.
+# Robust aggregation needs an honest majority, hence 6 nodes (not 3). Dial up for the
+# final paper numbers if you have time.
+
+experiment:
+  name: "kaggle_defences"
+  seed: 42
+  output_dir: "/kaggle/working/results/defences"
+
+data:
+  root: "/kaggle/working/nih"
+  image_root: null                  # notebook sets this to the mounted image folder
+  image_size: 128
+  severity:
+    enabled: true
+    binning: "tercile"
+  subsample:
+    enabled: true
+    max_images: 12000
+    keep_bbox: true
+
+partition:
+  num_nodes: 6                      # honest majority so robust aggregation is meaningful
+  scheme: "non_iid"
+  test_frac: 0.2
+  manifest_path: "/kaggle/working/nih/manifest_def.json"
+  non_iid:
+    alpha: 0.5
+
+model:
+  backbone: "densenet121"
+  pretrained: true
+  dropout: 0.0
+  heads:
+    pathology: true
+    severity: true
+
+training:
+  local_epochs: 1                   # local epochs per federated round
+  batch_size: 32
+  optimizer: "adam"
+  lr: 0.0001
+  rounds: 8                         # federated communication rounds per run
+  num_workers: 4
+  use_gpu: true
+  severity_weight: 1.0
+  class_balanced: true
+  max_batches: null
+
+federated:
+  strategy: "fedavg"                # overridden per sweep run
+  fraction_fit: 1.0
+  heterogeneity_mitigation:
+    fedprox_mu: 0.0
+    fedbn: false
+  robust:
+    beta: 0.34                      # trimmed-mean: trim ~2 of 6 each end
+    multi_k: 2
+
+privacy:
+  dp:
+    enabled: false                  # overridden per sweep run
+    max_grad_norm: 1.0
+    noise_multiplier: 1.0           # overridden per sweep run
+    target_delta: 1.0e-5
+    accountant: "rdp"
+
+attack:
+  enabled: false                    # overridden per sweep run
+  byzantine:
+    type: "model_replacement"
+    fraction: 0.34
+    scale: 10.0
+
+evaluation:
+  metrics: ["auc", "accuracy", "severity_mae", "severity_qwk"]

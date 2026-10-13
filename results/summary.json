@@ -1,0 +1,137 @@
+{
+  "setup": {
+    "backbone": "densenet121",
+    "num_nodes": 3,
+    "partition": "dirichlet (alpha=0.5)",
+    "fed_rounds": 12,
+    "defences": "none (plain FedAvg, no DP, no robust aggregation)",
+    "dataset": "NIH ChestX-ray14 (subset, class-balanced)",
+    "image_size": 224,
+    "baseline_epochs": 12
+  },
+  "centralized": {
+    "mean_auc": 0.7716099901300781,
+    "mean_accuracy": 0.7166341186067783,
+    "per_pathology_auc": {
+      "Atelectasis": 0.7281034098506798,
+      "Cardiomegaly": 0.8723515238540019,
+      "Effusion": 0.8104085270821325,
+      "Infiltration": 0.7012139463696985,
+      "Mass": 0.7776424867837611,
+      "Nodule": 0.6810941753591547,
+      "Pneumonia": 0.6889720772368159,
+      "Pneumothorax": 0.8446096991178957,
+      "Consolidation": 0.7234105427069878,
+      "Edema": 0.8520672706815894,
+      "Emphysema": 0.8139241795452811,
+      "Fibrosis": 0.7888208514013204,
+      "Pleural_Thickening": 0.7320539499950856,
+      "Hernia": 0.7878672218366876
+    },
+    "severity": {
+      "severity_mae": 0.5882352941176471,
+      "severity_qwk": 0.38553255410036147,
+      "n": 187
+    }
+  },
+  "single_site": {
+    "per_node_auc": {
+      "0": 0.7132228010973815,
+      "1": 0.731371385213387,
+      "2": 0.7175734562906445
+    },
+    "mean_auc": 0.7207225475338044
+  },
+  "federated": {
+    "final_mean_auc": 0.7543761862685467,
+    "final_mean_accuracy": 0.7568659926334265,
+    "per_pathology_auc": {
+      "Atelectasis": 0.7102079334243825,
+      "Cardiomegaly": 0.843711154327829,
+      "Effusion": 0.8057353914472982,
+      "Infiltration": 0.7014887719703071,
+      "Mass": 0.7459511633334348,
+      "Nodule": 0.6783770428470033,
+      "Pneumonia": 0.7125880608083055,
+      "Pneumothorax": 0.8289906537857357,
+      "Consolidation": 0.7193796117707429,
+      "Edema": 0.8552424942263279,
+      "Emphysema": 0.7665130568356374,
+      "Fibrosis": 0.8066811210563721,
+      "Pleural_Thickening": 0.712203991852256,
+      "Hernia": 0.6741961600740226
+    },
+    "severity": {
+      "severity_mae": 0.6310160427807486,
+      "severity_qwk": 0.4213550876064941,
+      "n": 187
+    },
+    "history": [
+      {
+        "round": 0,
+        "mean_auc": 0.48598178662831576,
+        "loss": 2.0367459220122237
+      },
+      {
+        "round": 1,
+        "mean_auc": 0.6073591574757243,
+        "loss": 1.897219204112311
+      },
+      {
+        "round": 2,
+        "mean_auc": 0.6452884175662287,
+        "loss": 1.8366491231470476
+      },
+      {
+        "round": 3,
+        "mean_auc": 0.6941212690520555,
+        "loss": 1.7667884126881868
+      },
+      {
+        "round": 4,
+        "mean_auc": 0.7160652828576326,
+        "loss": 1.7160402482056487
+      },
+      {
+        "round": 5,
+        "mean_auc": 0.7334253756986701,
+        "loss": 1.6658650195401017
+      },
+      {
+        "round": 6,
+        "mean_auc": 0.7349052874731653,
+        "loss": 1.7132479270189507
+      },
+      {
+        "round": 7,
+        "mean_auc": 0.7406201215292352,
+        "loss": 1.6524097514415972
+      },
+      {
+        "round": 8,
+        "mean_auc": 0.7507491476534973,
+        "loss": 1.7067734796697922
+      },
+      {
+        "round": 9,
+        "mean_auc": 0.7488663192006981,
+        "loss": 1.7121962037205039
+      },
+      {
+        "round": 10,
+        "mean_auc": 0.7579614527394846,
+        "loss": 1.6107164394131024
+      },
+      {
+        "round": 11,
+        "mean_auc": 0.7607592894874731,
+        "loss": 1.7455353565637577
+      },
+      {
+        "round": 12,
+        "mean_auc": 0.7543761862685467,
+        "loss": 1.8008945799993548
+      }
+    ]
+  }
+}

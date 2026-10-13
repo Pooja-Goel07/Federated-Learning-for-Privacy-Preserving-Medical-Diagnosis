@@ -1,0 +1,400 @@
+{
+  "run_type": "single_site",
+  "config_source": "configs/kaggle_real.yaml",
+  "seed": 42,
+  "device": "cuda",
+  "backbone": "densenet121",
+  "partition": {
+    "scheme": "dirichlet",
+    "num_nodes": 3,
+    "alpha": 0.5,
+    "test_size": 5779
+  },
+  "per_node": {
+    "0": {
+      "train_size": 6375,
+      "train_history": [
+        {
+          "total": 1.9325144743919374,
+          "pathology": 1.1629300200939179,
+          "severity": 0.7695844611525535,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 0
+        },
+        {
+          "total": 1.8945218640565873,
+          "pathology": 1.1179876947402954,
+          "severity": 0.7765341713279486,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 1
+        },
+        {
+          "total": 1.7738747364282608,
+          "pathology": 1.0914193898439408,
+          "severity": 0.6824553474038839,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 2
+        },
+        {
+          "total": 1.719046577513218,
+          "pathology": 1.0737239521741868,
+          "severity": 0.6453226204961539,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 3
+        },
+        {
+          "total": 1.5947710520029068,
+          "pathology": 1.0498461356759072,
+          "severity": 0.5449249121174217,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 4
+        },
+        {
+          "total": 1.4585427701473237,
+          "pathology": 1.0286419862508773,
+          "severity": 0.42990078556351363,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 5
+        },
+        {
+          "total": 1.3576719921827316,
+          "pathology": 1.0092036843299865,
+          "severity": 0.34846831250702964,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 6
+        },
+        {
+          "total": 1.2899424093961716,
+          "pathology": 0.9946422949433327,
+          "severity": 0.2953001130511984,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 7
+        },
+        {
+          "total": 1.154558656513691,
+          "pathology": 0.9723930034041405,
+          "severity": 0.1821656492780312,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 8
+        },
+        {
+          "total": 1.0414305993914603,
+          "pathology": 0.9485192802548409,
+          "severity": 0.0929113180359127,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 9
+        },
+        {
+          "total": 1.1874117678403855,
+          "pathology": 0.9558745834231377,
+          "severity": 0.23153718670044326,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 10
+        },
+        {
+          "total": 1.2275345030426978,
+          "pathology": 0.9555784800648689,
+          "severity": 0.2719560223835288,
+          "num_batches": 200,
+          "num_severity_samples": 250,
+          "epoch": 11
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.6232248900699507,
+            "Cardiomegaly": 0.7383599487905127,
+            "Effusion": 0.7604228314011827,
+            "Infiltration": 0.6257913360676353,
+            "Mass": 0.6893311213255813,
+            "Nodule": 0.6326419773051939,
+            "Pneumonia": 0.635141610336271,
+            "Pneumothorax": 0.7896958491220787,
+            "Consolidation": 0.7053910899557034,
+            "Edema": 0.8088825723929651,
+            "Emphysema": 0.699672624351826,
+            "Fibrosis": 0.7577327551577452,
+            "Pleural_Thickening": 0.7144239470464429,
+            "Hernia": 0.8044066620402499
+          },
+          "mean_auc": 0.7132228010973815,
+          "mean_accuracy": 0.7307121845104195
+        },
+        "severity": {
+          "severity_mae": 0.6470588235294118,
+          "severity_qwk": 0.3022565169936797,
+          "n": 187
+        }
+      }
+    },
+    "1": {
+      "train_size": 7760,
+      "train_history": [
+        {
+          "total": 1.816643442391368,
+          "pathology": 1.191095608252066,
+          "severity": 0.6255478322996524,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 0
+        },
+        {
+          "total": 1.7182561478006497,
+          "pathology": 1.1270431569574302,
+          "severity": 0.5912129937866588,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 1
+        },
+        {
+          "total": 1.5895662768878074,
+          "pathology": 1.092870456201059,
+          "severity": 0.49669582384481353,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 2
+        },
+        {
+          "total": 1.4996873704494271,
+          "pathology": 1.059439269112952,
+          "severity": 0.4402481005584568,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 3
+        },
+        {
+          "total": 1.4522776611057329,
+          "pathology": 1.0279813099790502,
+          "severity": 0.4242963506246116,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 4
+        },
+        {
+          "total": 1.2485541973584964,
+          "pathology": 0.990706070950983,
+          "severity": 0.2578481291693831,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 5
+        },
+        {
+          "total": 1.2091653163050429,
+          "pathology": 0.9761425053141245,
+          "severity": 0.23302280974771766,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 6
+        },
+        {
+          "total": 1.1346439540140913,
+          "pathology": 0.945077574056853,
+          "severity": 0.1895663782961043,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 7
+        },
+        {
+          "total": 1.125694085786372,
+          "pathology": 0.9268808946197415,
+          "severity": 0.19881319015590118,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 8
+        },
+        {
+          "total": 1.0122012770715565,
+          "pathology": 0.898191501083688,
+          "severity": 0.11400977882998324,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 9
+        },
+        {
+          "total": 0.959381852375627,
+          "pathology": 0.8723066456523942,
+          "severity": 0.08707520817632838,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 10
+        },
+        {
+          "total": 0.9099874108907127,
+          "pathology": 0.8485575337959416,
+          "severity": 0.06142987595335904,
+          "num_batches": 243,
+          "num_severity_samples": 178,
+          "epoch": 11
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.6973688445396904,
+            "Cardiomegaly": 0.8197862863595491,
+            "Effusion": 0.7902907833215912,
+            "Infiltration": 0.6906123999268947,
+            "Mass": 0.7300249611883962,
+            "Nodule": 0.6400065586731715,
+            "Pneumonia": 0.6801488833746898,
+            "Pneumothorax": 0.7885413213282066,
+            "Consolidation": 0.7054901821999658,
+            "Edema": 0.8283330372475868,
+            "Emphysema": 0.7567554378728858,
+            "Fibrosis": 0.7346632401866368,
+            "Pleural_Thickening": 0.6914499527200383,
+            "Hernia": 0.6857275040481147
+          },
+          "mean_auc": 0.731371385213387,
+          "mean_accuracy": 0.7416755246829654
+        },
+        "severity": {
+          "severity_mae": 0.6417112299465241,
+          "severity_qwk": 0.3734177215189872,
+          "n": 187
+        }
+      }
+    },
+    "2": {
+      "train_size": 10102,
+      "train_history": [
+        {
+          "total": 1.8306128541125526,
+          "pathology": 1.1690964340409147,
+          "severity": 0.6615164149316806,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 0
+        },
+        {
+          "total": 1.6272361578443382,
+          "pathology": 1.08934960184218,
+          "severity": 0.5378865601990042,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 1
+        },
+        {
+          "total": 1.5535182149349889,
+          "pathology": 1.046004827829856,
+          "severity": 0.5075133844879987,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 2
+        },
+        {
+          "total": 1.4878987258748164,
+          "pathology": 1.0104526817044126,
+          "severity": 0.47744604345717573,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 3
+        },
+        {
+          "total": 1.369877000586896,
+          "pathology": 0.9851417335905607,
+          "severity": 0.3847352686379388,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 4
+        },
+        {
+          "total": 1.3127251522073262,
+          "pathology": 0.9670362736605391,
+          "severity": 0.3456888795016876,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 5
+        },
+        {
+          "total": 1.1956432771079148,
+          "pathology": 0.9404547388040567,
+          "severity": 0.2551885359740781,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 6
+        },
+        {
+          "total": 1.140359406984305,
+          "pathology": 0.9288986340353761,
+          "severity": 0.21146077311420378,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 7
+        },
+        {
+          "total": 1.0858001439254494,
+          "pathology": 0.8999981738721268,
+          "severity": 0.18580196938591478,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 8
+        },
+        {
+          "total": 1.062239463759374,
+          "pathology": 0.8917557159556618,
+          "severity": 0.17048374784469703,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 9
+        },
+        {
+          "total": 1.0162046764847599,
+          "pathology": 0.8693905685898624,
+          "severity": 0.1468141080520213,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 10
+        },
+        {
+          "total": 0.9819218346589729,
+          "pathology": 0.8536645400373242,
+          "severity": 0.12825729334748112,
+          "num_batches": 316,
+          "num_severity_samples": 265,
+          "epoch": 11
+        }
+      ],
+      "test_metrics": {
+        "pathology": {
+          "per_pathology_auc": {
+            "Atelectasis": 0.6848186617227243,
+            "Cardiomegaly": 0.7936111285372072,
+            "Effusion": 0.7835459766433954,
+            "Infiltration": 0.6853041817395321,
+            "Mass": 0.6794080342556796,
+            "Nodule": 0.6652686809879339,
+            "Pneumonia": 0.6305054048658053,
+            "Pneumothorax": 0.7901491784688506,
+            "Consolidation": 0.7114805442995417,
+            "Edema": 0.7803695150115473,
+            "Emphysema": 0.7500912323582081,
+            "Fibrosis": 0.7781551598051233,
+            "Pleural_Thickening": 0.6920854360771528,
+            "Hernia": 0.6212352532963219
+          },
+          "mean_auc": 0.7175734562906445,
+          "mean_accuracy": 0.7386596791338096
+        },
+        "severity": {
+          "severity_mae": 0.7967914438502673,
+          "severity_qwk": 0.1739348895634879,
+          "n": 187
+        }
+      }
+    }
+  },
+  "mean_auc_across_nodes": 0.7207225475338044
+}
