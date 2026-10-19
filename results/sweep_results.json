@@ -183,7 +183,65 @@
     {
       "name": "atk_fedavg",
       "group": "robust",
-      "error": "Traceback (most recent call last):\n  File \"/kaggle/working/fl/src/experiments/sweep.py\", line 126, in run_sweep\n    res = run_federated(cfg, data_root=data_root)\n  File \"/kaggle/working/fl/src/experiments/federated.py\", line 121, in run_federated\n    history, final_params = run_federated_rounds(\n                            ~~~~~~~~~~~~~~~~~~~~^\n        global_model, clients, strategy, num_rounds, evaluate_model_fn, fedbn=fedbn\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/kaggle/working/fl/src/federated/simulation.py\", line 96, in run_federated_rounds\n    test_metrics = eval_current(parameters)\n  File \"/kaggle/working/fl/src/federated/simulation.py\", line 62, in eval_current\n    return evaluate_model_fn(global_model)\n  File \"/kaggle/working/fl/src/experiments/federated.py\", line 119, in evaluate_model_fn\n    return evaluate(model, shared_test, device, max_batches=max_batches, loss_fn=eval_loss_fn)\n  File \"/usr/local/lib/python3.13/dist-packages/torch/utils/_contextlib.py\", line 124, in decorate_context\n    return func(*args, **kwargs)\n  File \"/kaggle/working/fl/src/models/engine.py\", line 115, in evaluate\n    results[\"pathology\"] = pathology_metrics(\n                           ~~~~~~~~~~~~~~~~~^\n        np.concatenate(path_logits), np.concatenate(path_targets)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/kaggle/working/fl/src/evaluation/metrics.py\", line 30, in pathology_metrics\n    auc = float(roc_auc_score(y, probs[:, i]))\n                ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/_param_validation.py\", line 216, in wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/metrics/_ranking.py\", line 620, in roc_auc_score\n    y_score = check_array(y_score, ensure_2d=False)\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/validation.py\", line 1107, in check_array\n    _assert_all_finite(\n    ~~~~~~~~~~~~~~~~~~^\n        array,\n        ^^^^^^\n    ...<2 lines>...\n        allow_nan=ensure_all_finite == \"allow-nan\",\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/validation.py\", line 120, in _assert_all_finite\n    _assert_all_finite_element_wise(\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        X,\n        ^^\n    ...<4 lines>...\n        input_name=input_name,\n        ^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/usr/local/lib/python3.13/dist-packages/sklearn/utils/validation.py\", line 169, in _assert_all_finite_element_wise\n    raise ValueError(msg_err)\nValueError: Input contains NaN.\n"
+      "strategy": "fedavg",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.5,
+      "mean_accuracy": 0.08607631808913487,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.5
+        }
+      ]
     },
     {
       "name": "atk_krum",

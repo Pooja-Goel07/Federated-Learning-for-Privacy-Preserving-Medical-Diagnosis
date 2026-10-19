@@ -351,6 +351,36 @@ Notes:
 - The pipeline uses only images present on disk and subsamples whole patients (keeping
   the bounding-box/severity images), so attaching any image mirror works unchanged.
 
+### 8.1 Trade-off sweep and privacy audit (Kaggle)
+
+Two more paper-critical experiments have their own Kaggle notebook,
+`notebooks/kaggle_tradeoff_audit.ipynb`, run exactly like the others (GPU, Internet, add
+the `nih-chest-xrays/data` input). It produces:
+- A **privacy-robustness-utility regime map** (`TRADEOFF_REPORT.md` + plot): federated AUC
+  as the malicious-client fraction grows, for FedAvg vs median, with and without DP, plus a
+  derived recommendation.
+- A **privacy audit** (`AUDIT_REPORT.md` + plots): a membership-inference attack and a
+  controlled gradient-inversion reconstruction at several DP budgets, verifying the privacy
+  budget actually reduces leakage.
+Both use the defence-sweep scale (6 nodes, 128px, ~12k images) — the notebook labels this
+clearly so it is never confused with the core comparison (3 nodes, 224px, ~30k).
+
+### 8.2 Visual dashboard (local)
+
+A browser dashboard visualizes the whole project: hospital nodes connected to the centre
+server, malicious hospitals, client-side differential-privacy layers, and the real measured
+result for each scenario (baseline / DP / attack / robust / composition). It is a single
+React + Tailwind page served by a small FastAPI backend. Run from the repo root:
+
+```
+venv\Scripts\python -m uvicorn backend.app.main:app --port 8000
+```
+
+then open `http://127.0.0.1:8000`. Toggle the aggregation rule, DP, and attack controls to
+watch the network change and the real numbers update. (The page also works by opening
+`frontend/dashboard.html` directly in a browser, since the results are embedded; the backend
+additionally exposes `/api/results` and `/api/scenarios`.)
+
 ---
 
 ## 9. The configuration file explained

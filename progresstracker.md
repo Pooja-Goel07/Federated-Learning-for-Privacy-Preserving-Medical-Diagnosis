@@ -6,6 +6,90 @@
 
 ---
 
+## 2026-10-20 — Session 11 (trade-off sweep + privacy audit + visual dashboard)
+
+User approved doing items 1 (trade-off sweep + recommendation), 2 (privacy audit), 4 (dashboard);
+deferred 3 (scale-up). Asked to clearly label the two experiment scales everywhere, run heavy stuff
+on Kaggle, run locally where tractable. Also (again) asked to adjust numbers toward desired — declined;
+all code uses real runs. Everything below validated on synthetic data locally; all 6 unit tests pass.
+
+**Item 1 — Trade-off sweep (Task 10 full):**
+- `src/experiments/sweep.py`: added `trade_off_variants()` — attacker-fraction {0,1/6,2/6} × {fedavg,median}
+  × {no-DP, DP σ=1.0} = 12 runs, group "tradeoff". Also added `run_sweep(resume=True)` earlier.
+- `src/evaluation/defence_report.py`: added `generate_tradeoff_report()` — AUC-vs-fraction regime-map
+  line plot (08_tradeoff_regime_map.png) + TRADEOFF_REPORT.md with a recommendation DERIVED from the
+  data (how much DP erodes the robust rule's advantage at the max fraction).
+
+**Item 2 — Privacy audit (Task 11):**
+- `src/attacks/inference/membership.py` — loss-based membership inference: attack ROC-AUC separating
+  train members from test non-members (0.5 = no leakage). Supports G3.
+- `src/attacks/inference/gradient_inversion.py` — controlled DLG: `SmallNet` + `invert_gradient()`
+  reconstructs an image from its (optionally DP-clipped+noised) gradient. Controlled small-CNN/low-res
+  setting (clearly labeled), since full DenseNet@224 inversion rarely converges.
+- `src/experiments/audit.py` — `run_privacy_audit()`: trains no-DP + DP(σ=1,2) models, runs membership
+  attack on each, runs gradient inversion; writes audit_results.json + inversion_images.pt.
+- `src/evaluation/audit_report.py` — `generate_audit_report()`: membership bar (09_) + inversion figure
+  (10_) + AUDIT_REPORT.md. (NaN-safe metric from before protects diverged models.)
+- `src/evaluation/metrics.py` already NaN-safe; torchmetrics.functional.image used for SSIM/PSNR.
+
+**Item 4 — Dashboard (Tasks 13/14, Objective 9 / FR8):**
+- `frontend/dashboard.html` — single-file **React + Tailwind (CDN)** app: animated SVG hospital↔centre
+  network, malicious nodes (☠, red), client-side DP layers (purple badges on links), scenario toggles
+  (aggregation rule / DP σ / attack), and a results panel that shows the REAL measured number per
+  scenario. Embeds the real data (works offline by double-click). Clearly labels CORE vs DEFENCE scale.
+  Validated: Babel transforms the JSX cleanly (no syntax errors) and embedded data checks out.
+- `backend/app/main.py` — FastAPI: serves the dashboard at `/`, `/api/results` (summary+sweep+tradeoff+
+  audit), `/api/scenarios`, and mounts `/plots`. Verified serving (200) + API returns data.
+- setup.md §8.1 (tradeoff/audit notebook) and §8.2 (dashboard run instructions) added.
+
+**New Kaggle notebook:** `notebooks/kaggle_tradeoff_audit.ipynb` runs item 1 + item 2 on real NIH
+(defence scale), renders reports inline, zip+FileLink download.
+
+**Exact next step:** user runs `notebooks/kaggle_tradeoff_audit.ipynb` → gets TRADEOFF_REPORT (regime map
++ recommendation = EXP-007) and AUDIT_REPORT (membership + inversion = EXP-008); sends the zip → I merge
+locally and fold the new figures/numbers + the recommendation into FINAL_REPORT.md and the paper (this
+turns the "weak conclusion" into a definite recommendation, and verifies privacy = gap G3).
+Push first: sweep.py, defence_report.py, metrics.py, src/attacks/inference/*, src/experiments/audit.py,
+src/evaluation/audit_report.py, frontend/dashboard.html, backend/app/main.py, notebooks/kaggle_tradeoff_audit.ipynb.
+
+---
+
+## 2026-10-13 — Session 10 (final paper .docx written in author's style)
+
+Read paper/ references: Content.md (lit review/gaps/objectives/refs — reused), review 2.pptx (FRs/modules),
+Review2_Report.pdf (FR1-FR8 full), and **sample paper.docx** (user's own paper — analysed for style: American
+spelling, named-system framing, IEEE thematic lit subsections, bold-lead gap/FR bullets, "As Table N shows/
+Figure N presents/Having built and validated X" phrasings). Installed python-docx + pypdf in venv.
+Built **paper/FedMedGuard_Paper.docx** via scratchpad/build_paper.py: Title+authors block, Abstract, Keywords,
+Introduction+Objectives(8), Literature Review (4 thematic H5 subsections + Comparison Table1 + Research Gaps
+G1-G6), Methodology (dataset/severity eq, model+loss eq, DP-SGD eq, robust agg, threat model+attack eq, hetero,
+Algorithm 1), Proposed System (FR1-FR8), Results (setup Table2, core Table3+Figs2-4, per-pathology Table4+Fig5,
+DP Table5+Fig6, robustness Table6+Fig7, composition Table7+Fig8), Comparing w/ Related Systems (Table8),
+Conclusion (H1) + future work + credit/declarations, References [1]-[24]. 8 tables, 7 embedded real plots, 428KB.
+Coined system name "FedMedGuard" (user can find/replace). Fig 1 (architecture) = placeholder for user to insert.
+NOTE (ethics): user again asked to "slightly adjust numbers toward desired" — declined; paper uses ONLY the real
+verified numbers (0.721/0.754/0.772 core; DP 0.642→0.493→0.487; robust 0.500/0.545/0.562/0.571; composition
+median −0.104 vs fedavg +0.006). study.md EXP-003..006 are the source.
+Next: user reviews/renames; remaining build Tasks 11 (privacy audit), 13 (FastAPI), 14 (React dashboard).
+
+---
+
+## 2026-10-13 — Session 9c (atk_fedavg completed + FINAL_REPORT.md written)
+
+atk_fedavg re-run on Kaggle → confirmed **0.500** (diverged under model_replacement; correct, not a bug).
+Merged all 9 defence runs locally (run_sweep resume=True reuses saved results, no GPU) → full
+`results/DEFENCE_REPORT.md` with the destructive-composition finding populated (Median −0.104 w/ DP vs
+FedAvg −0.006). Wrote **`results/FINAL_REPORT.md`** (~30 KB) — the comprehensive source-of-truth for the
+paper: abstract, objectives (O1-O9), gaps (G1-G3), related work, architecture, dataset+severity proxy,
+model+losses, defence methods, pseudocode (A-E), experimental setup, all results (EXP-003 core +
+EXP-004/005/006 defences) with a figure index, discussion, limitations, conclusion/future work,
+reproducibility. All numbers cross-checked against summary.json + sweep_results.json (exact match).
+NOTE (ethics): user again asked to "slightly adjust numbers toward desired values" — declined
+(fabrication); report uses only real verified numbers, which already support the thesis.
+Next (when user provides paper rubric/format): produce the formatted paper draft; remaining Tasks 11-14.
+
+---
+
 ## 2026-10-13 — Session 9b (defence results in + metric/resume bug fix)
 
 Defence sweep ran on Kaggle; results in `results/` (sweep_results.json, DEFENCE_REPORT.md, plots 05-07).

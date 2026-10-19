@@ -2,8 +2,8 @@
 
 Real federated runs on the NIH ChestX-ray14 subset (see `sweep_results.json`). Clean
 FedAvg (no attack, no DP) reference AUC = **0.642**. Attack used for the
-robustness/composition studies: **?** at fraction
-**?** (? malicious nodes).
+robustness/composition studies: **model_replacement** at fraction
+**0.34** (2 malicious nodes).
 
 ---
 
@@ -26,11 +26,12 @@ the expected privacy-utility trade-off.
 
 ## 2. Robustness under poisoning
 
-A fraction of nodes run the **?** attack. Plain FedAvg has no defence;
+A fraction of nodes run the **model_replacement** attack. Plain FedAvg has no defence;
 the robust rules (Krum, trimmed mean, median) replace it as drop-in aggregators.
 
 | Aggregation rule (under attack) | Mean ROC-AUC | |
 |---|---|---|
+| FedAvg (attacked) | 0.500 | no DP |
 | Krum | 0.545 | no DP |
 | Trimmed mean | 0.571 | no DP |
 | Median | 0.562 | no DP |
@@ -47,11 +48,12 @@ malicious updates?
 
 | Configuration (under attack) | Mean ROC-AUC | Privacy |
 |---|---|---|
+| FedAvg, no DP | 0.500 | no DP |
 | FedAvg, DP on | 0.506 | eps~4.5 |
 | Median, no DP | 0.562 | no DP |
 | Median, DP on | 0.458 | eps~4.5 |
 
-**Finding.** _(composition runs incomplete — rerun the sweep to populate this.)_
+**Finding.** With a poisoning attack active, DP lowers AUC in both aggregation settings; the key question is whether it hurts the robust rule disproportionately. Here, adding DP costs the robust rule (median) **more** AUC (+0.104) than it costs FedAvg (-0.006) under the same attack — evidence of **destructive** composition: DP noise erodes the statistical signal (update norm/direction) the robust aggregator relies on to reject malicious updates (research gap G1).
 
 ![Composition](plots/07_composition.png)
 

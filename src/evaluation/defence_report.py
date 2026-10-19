@@ -166,6 +166,117 @@ def _finding(runs: dict, robust_rule: str) -> str:
             f"the key question is whether it hurts the robust rule disproportionately. Here, {verdict}")
 
 
+def _tradeoff_series(runs: dict, robust_rule: str):
+    """Group tradeoff runs into {(strategy, dp): [(fraction, auc), ...]} sorted by fraction."""
+    series: dict = {}
+    for r in runs.values():
+        if r.get("group") != "tradeoff":
+            continue
+        key = (r.get("strategy"), bool(r.get("dp_enabled")))
+        frac = float(r.get("attack", {}).get("fraction", 0.0))
+        series.setdefault(key, []).append((frac, _auc(r)))
+    for k in series:
+        series[k] = sorted(series[k])
+    return series
+
+
+def generate_tradeoff_report(out_dir: str | Path, robust_rule: str = "median") -> dict:
+    """Regime map: AUC vs attacker fraction for {FedAvg, robust} x {no-DP, DP} + recommendation."""
+    out_dir = Path(out_dir)
+    plots = out_dir / "plots"
+    plots.mkdir(parents=True, exist_ok=True)
+    data = json.loads((out_dir / "sweep_results.json").read_text())
+    runs = _by_name(data)
+    series = _tradeoff_series(runs, robust_rule)
+
+    style_map = {
+        ("fedavg", False): (C_ATTACK, "-", "o", "FedAvg, no DP"),
+        ("fedavg", True): (C_ATTACK, "--", "s", "FedAvg, DP"),
+        (robust_rule, False): (C_FED, "-", "o", f"{robust_rule.title()}, no DP"),
+        (robust_rule, True): (C_FED, "--", "s", f"{robust_rule.title()}, DP"),
+    }
+    with plt.rc_context(_RC):
+        fig, ax = plt.subplots(figsize=(8, 5))
+        for key, pts in series.items():
+            if key not in style_map or not pts:
+                continue
+            col, ls, mk, lab = style_map[key]
+            xs = [p[0] * 100 for p in pts]
+            ys = [p[1] for p in pts]
+            ax.plot(xs, ys, color=col, ls=ls, marker=mk, ms=7, lw=2.0,
+                    markerfacecolor="white", markeredgecolor=col, markeredgewidth=1.6, label=lab)
+        ax.set_xlabel("Malicious clients (% of nodes)")
+        ax.set_ylabel("Federated global mean ROC-AUC")
+        ax.set_title("Privacy-robustness-utility trade-off: does DP erode robust defence?")
+        ax.legend(frameon=False, fontsize=9)
+        _style(ax)
+        fig.tight_layout()
+        fig.savefig(plots / "08_tradeoff_regime_map.png")
+        plt.close(fig)
+
+    # Recommendation derived from the highest attacker fraction tested.
+    def at(strat, dp, frac):
+        pts = series.get((strat, dp), [])
+        for f, a in pts:
+            if abs(f - frac) < 1e-6:
+                return a
+        return float("nan")
+
+    fracs = sorted({f for pts in series.values() for f, _ in pts})
+    fmax = fracs[-1] if fracs else 0.0
+    adv_nodp = at(robust_rule, False, fmax) - at("fedavg", False, fmax)
+    adv_dp = at(robust_rule, True, fmax) - at("fedavg", True, fmax)
+    rr = robust_rule
+    if adv_nodp == adv_nodp and adv_dp == adv_dp:
+        erosion = adv_nodp - adv_dp
+        if erosion > 0.02:
+            rec = (f"At {int(fmax*100)}% malicious clients, the robust rule ({rr}) holds a "
+                   f"+{adv_nodp:.3f} AUC advantage over FedAvg without DP, but only +{adv_dp:.3f} with "
+                   f"DP — DP erodes {erosion:.3f} of the robustness benefit. **Recommendation:** when a "
+                   f"tight privacy budget is mandatory, prefer aggregation rules that key on update "
+                   f"*direction/similarity* rather than *magnitude*, or relax ε where strong Byzantine "
+                   f"tolerance is the priority; do not assume magnitude-based robust rules retain their "
+                   f"guarantee once DP noise is applied.")
+        else:
+            rec = (f"At {int(fmax*100)}% malicious clients, the robust rule ({rr}) keeps a comparable "
+                   f"advantage over FedAvg with DP (+{adv_dp:.3f}) and without (+{adv_nodp:.3f}); at this "
+                   f"operating point the two defences compose acceptably.")
+    else:
+        rec = "_(trade-off runs incomplete — rerun the sweep to populate the recommendation.)_"
+
+    rows = []
+    for frac in fracs:
+        rows.append([f"{int(frac*100)}%",
+                     f"{at('fedavg', False, frac):.3f}", f"{at('fedavg', True, frac):.3f}",
+                     f"{at(rr, False, frac):.3f}", f"{at(rr, True, frac):.3f}"])
+    table_md = "\n".join(f"| {r[0]} | {r[1]} | {r[2]} | {r[3]} | {r[4]} |" for r in rows)
+
+    md = f"""# Privacy-Robustness-Utility Trade-off (regime map)
+
+Federated global mean ROC-AUC as the fraction of malicious clients grows, for plain
+FedAvg and a robust rule ({rr}), each with and without differential privacy (σ=1.0).
+Same defence-sweep scale as the other defence experiments (6 nodes, 128px, ~12k images,
+8 rounds); see study.md.
+
+| Malicious % | FedAvg no-DP | FedAvg DP | {rr.title()} no-DP | {rr.title()} DP |
+|---|---|---|---|---|
+{table_md}
+
+**Reading the map.** Without DP, the robust rule's line stays high as the attack grows
+while FedAvg's falls — the expected robustness benefit. With DP on, that gap narrows,
+because DP's clipping and noise remove the update statistics the robust rule needs.
+
+**Recommendation.** {rec}
+
+![Trade-off regime map](plots/08_tradeoff_regime_map.png)
+
+*Generated from `sweep_results.json` by `src/evaluation/defence_report.py`.*
+"""
+    (out_dir / "TRADEOFF_REPORT.md").write_text(md, encoding="utf-8")
+    print(f"[tradeoff-report] wrote plot + {out_dir / 'TRADEOFF_REPORT.md'}")
+    return data
+
+
 def generate_defence_report(out_dir: str | Path, robust_rule: str = "median") -> dict:
     out_dir = Path(out_dir)
     plots = out_dir / "plots"

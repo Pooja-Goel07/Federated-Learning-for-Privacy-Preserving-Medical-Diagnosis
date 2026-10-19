@@ -130,8 +130,8 @@ Template for each experiment entry:
 - **EXP-005 (robustness):** under model_replacement, **plain FedAvg diverged (weights → NaN, AUC ≈ 0.50 —
   total collapse; the attack boosts the malicious update by the client count and undefended averaging
   propagates it).** Robust rules hold: **trimmed_mean 0.571, median 0.562, krum 0.545** vs clean 0.642.
-  Robust aggregation recovers most utility under a 33% attack (Objective 3). [atk_fedavg exact value from
-  the NaN-safe-metric re-run pending; diverged → 0.50 by definition.]
+  Robust aggregation recovers most utility under a 33% attack (Objective 3). atk_fedavg confirmed = **0.500**
+  (NaN-safe re-run): round 0 = 0.52, then collapses to 0.50 every round — FedAvg is fully destroyed.
 
 - **EXP-006 (composition — G1, the core contribution):** under attack, {FedAvg, Median} × {no-DP, DP σ=1.0}:
   Median no-DP **0.562** → Median+DP **0.458** (**−0.104**); FedAvg diverged(~0.50) → FedAvg+DP **0.506**
@@ -147,3 +147,22 @@ Template for each experiment entry:
 
 _Next: complete atk_fedavg (NaN-safe re-run), then write the research-paper report from EXP-003 (core) +
 EXP-004/005/006 (defences). Remaining build: Task 11 privacy-audit attacks (unbuilt), 12–15._
+
+### EXP-007 (planned) — Privacy-robustness-utility regime map  (Task 10 full, code ready 2026-10-20)
+- **Code:** `trade_off_variants()` + `generate_tradeoff_report()`. **Notebook:** `kaggle_tradeoff_audit.ipynb`.
+- **Design:** attacker fraction {0, 1/6, 2/6} × {FedAvg, median} × {no-DP, DP σ=1.0}, defence scale
+  (6 nodes, 128px, ~12k, 8 rounds), model_replacement. Output: AUC-vs-fraction line plot + a recommendation
+  derived from how much DP erodes the robust rule's advantage at the highest attacker fraction.
+- **Purpose:** turns the one-point composition finding (EXP-006) into a regime map + practitioner
+  recommendation — addresses the "conclusion is thin" concern. Numbers pending the Kaggle run.
+
+### EXP-008 (planned) — Privacy audit: membership inference + gradient inversion  (Task 11, code ready 2026-10-20)
+- **Code:** `src/attacks/inference/{membership,gradient_inversion}.py`, `src/experiments/audit.py`,
+  `src/evaluation/audit_report.py`. **Notebook:** `kaggle_tradeoff_audit.ipynb` (Part B).
+- **Design:** train no-DP + DP(σ=1,2) models on the pooled subset; membership-inference attack ROC-AUC
+  (0.5 = no leakage) per budget; controlled small-CNN gradient-inversion SSIM/PSNR per budget.
+- **Purpose:** empirically verify the DP budget reduces leakage (Objective 7 / gap G3) — privacy measured,
+  not asserted. Validated on synthetic locally; real numbers pending the Kaggle run.
+
+_Dashboard (Objective 9 / FR8): `frontend/dashboard.html` (React+Tailwind) + `backend/app/main.py` (FastAPI)
+visualize all scenarios with the real numbers. Not an experiment; a demonstrator._

@@ -121,6 +121,38 @@ def _load_completed(out_dir: Path, name: str) -> dict | None:
     return res
 
 
+def trade_off_variants(
+    attack_type: str = "model_replacement",
+    fractions: tuple[float, ...] = (0.0, 0.17, 0.34),   # 0, 1/6, 2/6 malicious of 6
+    dp_noise: float = 1.0,
+    strategies: tuple[str, ...] = ("fedavg", "median"),
+) -> list[dict]:
+    """Trade-off matrix: attacker-fraction x {no-DP, DP} x {FedAvg, robust rule}.
+
+    Produces the regime map that answers 'does DP erode robust aggregation's defence as
+    the attack grows?'. ``fraction=0`` is the clean (no-attack) anchor. Default is
+    3 x 2 x 2 = 12 federated runs.
+    """
+    variants: list[dict] = []
+    for frac in fractions:
+        atk_on = frac > 0.0
+        for strat in strategies:
+            for dp_on in (False, True):
+                variants.append({
+                    "name": f"f{int(round(frac*100)):02d}_{strat}_{'dp' if dp_on else 'nodp'}",
+                    "group": "tradeoff",
+                    "overrides": {
+                        "federated.strategy": strat,
+                        "attack.enabled": atk_on,
+                        "attack.byzantine.type": attack_type if atk_on else "none",
+                        "attack.byzantine.fraction": frac,
+                        "privacy.dp.enabled": dp_on,
+                        "privacy.dp.noise_multiplier": dp_noise,
+                    },
+                })
+    return variants
+
+
 def run_sweep(
     base_config: dict,
     variants: list[dict],
