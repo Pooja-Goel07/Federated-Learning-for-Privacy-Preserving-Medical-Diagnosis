@@ -148,21 +148,33 @@ Template for each experiment entry:
 _Next: complete atk_fedavg (NaN-safe re-run), then write the research-paper report from EXP-003 (core) +
 EXP-004/005/006 (defences). Remaining build: Task 11 privacy-audit attacks (unbuilt), 12–15._
 
-### EXP-007 (planned) — Privacy-robustness-utility regime map  (Task 10 full, code ready 2026-10-20)
-- **Code:** `trade_off_variants()` + `generate_tradeoff_report()`. **Notebook:** `kaggle_tradeoff_audit.ipynb`.
-- **Design:** attacker fraction {0, 1/6, 2/6} × {FedAvg, median} × {no-DP, DP σ=1.0}, defence scale
-  (6 nodes, 128px, ~12k, 8 rounds), model_replacement. Output: AUC-vs-fraction line plot + a recommendation
-  derived from how much DP erodes the robust rule's advantage at the highest attacker fraction.
-- **Purpose:** turns the one-point composition finding (EXP-006) into a regime map + practitioner
-  recommendation — addresses the "conclusion is thin" concern. Numbers pending the Kaggle run.
+### EXP-007 — Privacy-robustness-utility regime map  (Task 10 full, Kaggle 2026-10-20)
+- **Config:** attacker fraction {0, 17%, 34%} × {FedAvg, median} × {no-DP, DP σ=1.0}, defence scale
+  (6 nodes, 128px, ~12k, 8 rounds), model_replacement. Results in `results/tradeoff/`.
+- **Results (mean ROC-AUC):**
+  | Malicious % | FedAvg no-DP | FedAvg DP | Median no-DP | Median DP |
+  | 0%  | 0.651 | 0.493 | 0.611 | 0.488 |
+  | 17% | 0.500 | 0.491 | 0.602 | 0.472 |
+  | 34% | 0.500 | 0.482 | 0.581 | 0.450 |
+- **Finding (STRONG):** without DP, Median's robustness advantage over FedAvg grows with the attack
+  (+0.081 at 34%); **with DP the advantage REVERSES to −0.032** (Median+DP 0.450 < FedAvg+DP 0.482) — DP
+  erodes 0.113 of the robustness benefit. This is the regime map + a concrete recommendation (prefer
+  direction/similarity-based rules under tight DP, or relax ε when Byzantine tolerance is critical).
+  Directly upgrades the EXP-006 one-point finding into a definite, actionable conclusion.
 
-### EXP-008 (planned) — Privacy audit: membership inference + gradient inversion  (Task 11, code ready 2026-10-20)
-- **Code:** `src/attacks/inference/{membership,gradient_inversion}.py`, `src/experiments/audit.py`,
-  `src/evaluation/audit_report.py`. **Notebook:** `kaggle_tradeoff_audit.ipynb` (Part B).
-- **Design:** train no-DP + DP(σ=1,2) models on the pooled subset; membership-inference attack ROC-AUC
-  (0.5 = no leakage) per budget; controlled small-CNN gradient-inversion SSIM/PSNR per budget.
-- **Purpose:** empirically verify the DP budget reduces leakage (Objective 7 / gap G3) — privacy measured,
-  not asserted. Validated on synthetic locally; real numbers pending the Kaggle run.
+### EXP-008 — Privacy audit: membership inference + gradient inversion  (Task 11, Kaggle 2026-10-20)
+- **Config:** no-DP + DP(σ=1,2) models on the pooled subset (128px, 5 epochs); membership attack +
+  controlled small-CNN (32px) gradient inversion. Results in `results/audit/`.
+- **Gradient inversion (STRONG, primary G3 evidence):** no-DP reconstructs the image almost perfectly
+  (SSIM **1.00**, PSNR 103 dB); DP σ=1.0 destroys it (SSIM **0.01**, PSNR 10 dB). DP demonstrably prevents
+  reconstruction from an intercepted gradient.
+- **Membership inference (INCONCLUSIVE):** no-DP attack ROC-AUC **0.492 ≈ 0.5** (member loss 0.250 ≈
+  non-member 0.247) — the model did not memorize at this scale, so there was no membership signal for DP
+  to remove; DP keeps it at 0.500. NOT a failure of DP, but it doesn't demonstrate the leak→protect arc.
+  To show that arc, re-run membership in an **over-fitting regime** (small ~2k subset, ~25 epochs) so the
+  undefended model leaks (AUC > 0.5) and DP pulls it toward 0.5. Gradient inversion already carries G3.
+- **Report-text bugs fixed (local):** the trade-off recommendation printed "+-0.032" (signed-format fix);
+  the audit auto-finding wrongly claimed 0.492 was "above 0.5" (now adaptive + honest).
 
 _Dashboard (Objective 9 / FR8): `frontend/dashboard.html` (React+Tailwind) + `backend/app/main.py` (FastAPI)
 visualize all scenarios with the real numbers. Not an experiment; a demonstrator._

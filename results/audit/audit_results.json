@@ -1,0 +1,61 @@
+{
+  "membership": {
+    "no_dp": {
+      "attack_auc": 0.4916143184439012,
+      "attack_advantage": 0.016771363112197624,
+      "member_mean_loss": 0.2502531111240387,
+      "nonmember_mean_loss": 0.24684734642505646,
+      "n_member": 12505,
+      "n_nonmember": 3433
+    },
+    "dp_sigma1.0": {
+      "attack_auc": 0.5004789229079705,
+      "attack_advantage": 0.0009578458159409386,
+      "member_mean_loss": 0.27221399545669556,
+      "nonmember_mean_loss": 0.2648653984069824,
+      "n_member": 12505,
+      "n_nonmember": 3433,
+      "epsilon": 0.9579870790575357
+    },
+    "dp_sigma2.0": {
+      "attack_auc": 0.49972725154039754,
+      "attack_advantage": 0.0005454969192049131,
+      "member_mean_loss": 0.2702336013317108,
+      "nonmember_mean_loss": 0.26326876878738403,
+      "n_member": 12505,
+      "n_nonmember": 3433,
+      "epsilon": 0.23562752744314808
+    }
+  },
+  "gradient_inversion": {
+    "no_dp": {
+      "ssim": 1.0,
+      "psnr": 103.15767669677734,
+      "grad_match_loss": 5.711610004399681e-11
+    },
+    "dp_sigma1.0": {
+      "ssim": 0.012873421423137188,
+      "psnr": 10.1297025680542,
+      "grad_match_loss": 176036.4375
+    },
+    "dp_sigma2.0": {
+      "ssim": 0.017474476248025894,
+      "psnr": 10.57735538482666,
+      "grad_match_loss": 704264.1875
+    }
+  },
+  "setup": {
+    "dataset": "NIH ChestX-ray14 (subset)",
+    "image_size": 128,
+    "epochs": 5,
+    "dp_noise_levels": [
+      1.0,
+      2.0
+    ],
+    "inversion": {
+      "controlled": true,
+      "model": "small CNN",
+      "size": 32
+    }
+  }
+}

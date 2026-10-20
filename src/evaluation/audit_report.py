@@ -105,15 +105,34 @@ def generate_audit_report(out_dir: str | Path) -> dict:
         for k in gi_keys)
 
     nodp_auc = mem.get("no_dp", {}).get("attack_auc", float("nan"))
-    best_dp = min((mem[k].get("attack_auc", 1.0) for k in keys if k != "no_dp"), default=float("nan"))
-    finding = (
-        f"Without DP the membership-inference attack reaches ROC-AUC {nodp_auc:.3f} (above the 0.5 "
-        f"no-leakage line), confirming the undefended model leaks training membership. Enabling DP "
-        f"lowers the attack to {best_dp:.3f}, toward chance — the privacy budget measurably reduces "
-        f"residual leakage. The gradient-inversion reconstruction degrades in parallel (lower SSIM/PSNR "
-        f"under DP), so the declared budget protects against a realistic reconstruction attack rather "
-        f"than merely being asserted."
-    ) if nodp_auc == nodp_auc else "_(audit runs incomplete.)_"
+    dp_aucs = [mem[k].get("attack_auc", float("nan")) for k in keys if k != "no_dp"]
+    best_dp = min((a for a in dp_aucs if a == a), default=float("nan"))
+    gi_nodp = gi.get("no_dp", {}).get("ssim", float("nan"))
+    gi_dp = min((gi[k].get("ssim", 1.0) for k in gi_keys if k != "no_dp"), default=float("nan"))
+
+    if nodp_auc != nodp_auc:
+        finding = "_(audit runs incomplete.)_"
+    elif nodp_auc > 0.55:
+        finding = (
+            f"Without DP the membership-inference attack reaches ROC-AUC {nodp_auc:.3f}, above the 0.5 "
+            f"no-leakage line, so the undefended model leaks training membership. Enabling DP lowers the "
+            f"attack to {best_dp:.3f}, toward chance, measurably reducing residual leakage. The "
+            f"gradient-inversion reconstruction degrades in parallel (SSIM {gi_nodp:.2f} without DP to "
+            f"{gi_dp:.2f} with DP), so the declared budget protects against a realistic reconstruction "
+            f"attack rather than merely being asserted."
+        )
+    else:
+        finding = (
+            f"The membership-inference attack is essentially at chance even **without** DP "
+            f"(ROC-AUC {nodp_auc:.3f} ≈ 0.5; member and non-member losses are nearly equal), meaning the "
+            f"model did not memorize its training set at this scale — so there is little membership signal "
+            f"for DP to remove here, and DP keeps the attack at chance ({best_dp:.3f}). The decisive audit "
+            f"evidence is therefore the **gradient-inversion** result: without DP the intercepted gradient "
+            f"reconstructs the input almost perfectly (SSIM {gi_nodp:.2f}), whereas with DP the "
+            f"reconstruction collapses to noise (SSIM {gi_dp:.2f}). This directly verifies that the DP "
+            f"budget prevents a realistic reconstruction attack (gap G3). A stronger membership "
+            f"demonstration would require an over-fitting regime (smaller training set, more epochs)."
+        )
 
     md = f"""# Privacy Audit — Membership Inference & Gradient Inversion
 

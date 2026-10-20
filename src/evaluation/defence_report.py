@@ -231,15 +231,16 @@ def generate_tradeoff_report(out_dir: str | Path, robust_rule: str = "median") -
         erosion = adv_nodp - adv_dp
         if erosion > 0.02:
             rec = (f"At {int(fmax*100)}% malicious clients, the robust rule ({rr}) holds a "
-                   f"+{adv_nodp:.3f} AUC advantage over FedAvg without DP, but only +{adv_dp:.3f} with "
-                   f"DP — DP erodes {erosion:.3f} of the robustness benefit. **Recommendation:** when a "
+                   f"{adv_nodp:+.3f} AUC advantage over FedAvg without DP, but only {adv_dp:+.3f} with "
+                   f"DP — DP erodes {erosion:.3f} of the robustness benefit (the advantage even reverses). "
+                   f"**Recommendation:** when a "
                    f"tight privacy budget is mandatory, prefer aggregation rules that key on update "
                    f"*direction/similarity* rather than *magnitude*, or relax ε where strong Byzantine "
                    f"tolerance is the priority; do not assume magnitude-based robust rules retain their "
                    f"guarantee once DP noise is applied.")
         else:
             rec = (f"At {int(fmax*100)}% malicious clients, the robust rule ({rr}) keeps a comparable "
-                   f"advantage over FedAvg with DP (+{adv_dp:.3f}) and without (+{adv_nodp:.3f}); at this "
+                   f"advantage over FedAvg with DP ({adv_dp:+.3f}) and without ({adv_nodp:+.3f}); at this "
                    f"operating point the two defences compose acceptably.")
     else:
         rec = "_(trade-off runs incomplete — rerun the sweep to populate the recommendation.)_"

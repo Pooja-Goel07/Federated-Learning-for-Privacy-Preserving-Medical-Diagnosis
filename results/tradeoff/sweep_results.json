@@ -1,0 +1,744 @@
+{
+  "runs": [
+    {
+      "name": "f00_fedavg_nodp",
+      "group": "tradeoff",
+      "strategy": "fedavg",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": false,
+        "type": "none",
+        "fraction": 0.0,
+        "num_malicious": 0,
+        "malicious_nodes": []
+      },
+      "mean_auc": 0.6508345230331093,
+      "mean_accuracy": 0.6867587699221839,
+      "severity": {
+        "severity_mae": 0.7415730337078652,
+        "severity_qwk": 0.21290387417717704,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5251810213953363
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5544557380427048
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5856499926724247
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.6040320239754209
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.6218867988302319
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.626685905952956
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.6362545531686472
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.6508345230331093
+        }
+      ]
+    },
+    {
+      "name": "f00_fedavg_dp",
+      "group": "tradeoff",
+      "strategy": "fedavg",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": false,
+        "type": "none",
+        "fraction": 0.0,
+        "num_malicious": 0,
+        "malicious_nodes": []
+      },
+      "mean_auc": 0.4925198344401355,
+      "mean_accuracy": 0.9139236819108651,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.48898943517899773
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.4900740771652294
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.48748983043571986
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.4864410914168313
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.48747347276153097
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.4916726908599122
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.4934042114476379
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.4925198344401355
+        }
+      ]
+    },
+    {
+      "name": "f00_median_nodp",
+      "group": "tradeoff",
+      "strategy": "median",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": false,
+        "type": "none",
+        "fraction": 0.0,
+        "num_malicious": 0,
+        "malicious_nodes": []
+      },
+      "mean_auc": 0.6111315028745385,
+      "mean_accuracy": 0.6680329574299863,
+      "severity": {
+        "severity_mae": 0.702247191011236,
+        "severity_qwk": 0.289398403142479,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.515697613033692
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5333192754881007
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.547908126380358
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5561151606695504
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5771273651044914
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5855488063500708
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5939812744537925
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.6111315028745385
+        }
+      ]
+    },
+    {
+      "name": "f00_median_dp",
+      "group": "tradeoff",
+      "strategy": "median",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": false,
+        "type": "none",
+        "fraction": 0.0,
+        "num_malicious": 0,
+        "malicious_nodes": []
+      },
+      "mean_auc": 0.4880397259363668,
+      "mean_accuracy": 0.9139236819108651,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.4820901457664556
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.488090710173959
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.4903246964447231
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.48939716997709093
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.48897656155056357
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.4881527599641386
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.4890699265241705
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.4880397259363668
+        }
+      ]
+    },
+    {
+      "name": "f17_fedavg_nodp",
+      "group": "tradeoff",
+      "strategy": "fedavg",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.17,
+        "num_malicious": 1,
+        "malicious_nodes": [
+          "0"
+        ]
+      },
+      "mean_auc": 0.5,
+      "mean_accuracy": 0.08607631808913487,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.5
+        }
+      ]
+    },
+    {
+      "name": "f17_fedavg_dp",
+      "group": "tradeoff",
+      "strategy": "fedavg",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.17,
+        "num_malicious": 1,
+        "malicious_nodes": [
+          "0"
+        ]
+      },
+      "mean_auc": 0.49100632683166584,
+      "mean_accuracy": 0.08607631808913487,
+      "severity": {
+        "severity_mae": 0.6685393258426966,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.46601053590949704
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.48785721790220266
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.48831419152577943
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.45513008563428164
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.49112691526017477
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.44972364728779396
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.49864262022473727
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.49100632683166584
+        }
+      ]
+    },
+    {
+      "name": "f17_median_nodp",
+      "group": "tradeoff",
+      "strategy": "median",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.17,
+        "num_malicious": 1,
+        "malicious_nodes": [
+          "0"
+        ]
+      },
+      "mean_auc": 0.6017310200145563,
+      "mean_accuracy": 0.5850359951729017,
+      "severity": {
+        "severity_mae": 0.7640449438202247,
+        "severity_qwk": 0.2650230507115654,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5120416287010598
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5225419014586895
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5318971118846826
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5470738441053948
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5766994193866835
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5805996355373242
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5900728608012493
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.6017310200145563
+        }
+      ]
+    },
+    {
+      "name": "f17_median_dp",
+      "group": "tradeoff",
+      "strategy": "median",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.17,
+        "num_malicious": 1,
+        "malicious_nodes": [
+          "0"
+        ]
+      },
+      "mean_auc": 0.4723599371884232,
+      "mean_accuracy": 0.08607631808913487,
+      "severity": {
+        "severity_mae": 0.6685393258426966,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.47427837356463926
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.46817000541574394
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.48229204166404693
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.4769939962403921
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.48188434912220235
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.47337258138225835
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.47605965104667647
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.4723599371884232
+        }
+      ]
+    },
+    {
+      "name": "f34_fedavg_nodp",
+      "group": "tradeoff",
+      "strategy": "fedavg",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.5,
+      "mean_accuracy": 0.08607631808913487,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.5
+        }
+      ]
+    },
+    {
+      "name": "f34_fedavg_dp",
+      "group": "tradeoff",
+      "strategy": "fedavg",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.48194181698265776,
+      "mean_accuracy": 0.2567308892680288,
+      "severity": {
+        "severity_mae": 1.0393258426966292,
+        "severity_qwk": 0.0,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.4935654078112425
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5028062914878882
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5008460652645108
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.4936733747777208
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5151317916140596
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5020794501862706
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.52012948048242
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.48194181698265776
+        }
+      ]
+    },
+    {
+      "name": "f34_median_nodp",
+      "group": "tradeoff",
+      "strategy": "median",
+      "dp_enabled": false,
+      "noise_multiplier": 1.0,
+      "epsilon": null,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.5806110633668823,
+      "mean_accuracy": 0.381611252132662,
+      "severity": {
+        "severity_mae": 0.7415730337078652,
+        "severity_qwk": 0.23119730885834133,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.5198558801262216
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.5062785379555275
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.5204468271020525
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.5327882694558019
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.5399979899109343
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.5480169951956633
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.5573512234144593
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.5650109896577306
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.5806110633668823
+        }
+      ]
+    },
+    {
+      "name": "f34_median_dp",
+      "group": "tradeoff",
+      "strategy": "median",
+      "dp_enabled": true,
+      "noise_multiplier": 1.0,
+      "epsilon": 4.500780040183771,
+      "attack": {
+        "enabled": true,
+        "type": "model_replacement",
+        "fraction": 0.34,
+        "num_malicious": 2,
+        "malicious_nodes": [
+          "0",
+          "1"
+        ]
+      },
+      "mean_auc": 0.45000419578290174,
+      "mean_accuracy": 0.08607631808913487,
+      "severity": {
+        "severity_mae": 0.9044943820224719,
+        "severity_qwk": 0.07034747388616513,
+        "n": 178
+      },
+      "history": [
+        {
+          "round": 0,
+          "mean_auc": 0.478161501547784
+        },
+        {
+          "round": 1,
+          "mean_auc": 0.46814594139104476
+        },
+        {
+          "round": 2,
+          "mean_auc": 0.4542550472975234
+        },
+        {
+          "round": 3,
+          "mean_auc": 0.44738127723376664
+        },
+        {
+          "round": 4,
+          "mean_auc": 0.443740534073938
+        },
+        {
+          "round": 5,
+          "mean_auc": 0.44089517193258704
+        },
+        {
+          "round": 6,
+          "mean_auc": 0.4471504686147023
+        },
+        {
+          "round": 7,
+          "mean_auc": 0.44402273580579005
+        },
+        {
+          "round": 8,
+          "mean_auc": 0.45000419578290174
+        }
+      ]
+    }
+  ]
+}
